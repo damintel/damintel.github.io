@@ -37,7 +37,7 @@ body {
   justify-content: center;
 }
 .search-div{ 
-  padding: 10px;
+  padding: 8px;
   border: 1px;
   border-radius: 10px;
   border-style: solid;
@@ -300,6 +300,9 @@ main{
 }
 @media (max-width:500px){
 .search-div{ 
-  width: 90%;
+  width: 95%;
   }
+  .search-div button{
+  font-size: 12px;
+}
 }
