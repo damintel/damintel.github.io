@@ -298,3 +298,8 @@ main{
     flex-wrap: wrap;
   }
 }
+@media (max-width:500px){
+.search-div{ 
+  width: 90%;
+  }
+}
