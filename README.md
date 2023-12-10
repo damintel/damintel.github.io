@@ -1,1 +1,0 @@
-# damintel.github.io
