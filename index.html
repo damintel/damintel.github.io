@@ -188,18 +188,24 @@
                 generation, structured data, and the small infrastructure decisions that make
                 a product feel dependable.
               </p>
-              <div class="flex flex-wrap gap-x-10 gap-y-3 font-mono text-sm text-[var(--paper-dim)]">
-                <div><span class="text-[var(--brass)]">based:</span> Lagos, Nigeria</div>
-                <div><span class="text-[var(--brass)]">stack:</span> Java · Spring Boot · MongoDB · Vue.js</div>
-              </div>
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-3 mt-14 field-label">
+          <div class="flex flex-wrap gap-3 mt-2 field-label">
             <button v-for="item in quickLinks" :key="item.key" @click="SetView(item.key)"
                     class="border hairline rounded-full px-4 py-2 hover:border-[var(--brass)] transition-colors">
               {{ item.label }} →
             </button>
+          </div>
+
+          <div class="mt-8">
+            <p class="field-label mb-3">more__</p>
+            <div class="flex flex-wrap gap-3 field-label">
+              <button v-for="item in moreLinks" :key="item.key" @click="SetView(item.key)"
+                      class="border hairline rounded-full px-4 py-2 text-[var(--paper-dim)] hover:border-[var(--brass)] hover:text-[var(--paper)] transition-colors">
+                {{ item.label }} →
+              </button>
+            </div>
           </div>
         </section>
 
@@ -246,7 +252,7 @@
 
         <!-- ================= PROJECTS ================= -->
         <section v-else-if="path==='projects'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
-          <p class="field-label mb-10">selected work</p>
+          <p class="field-label mb-10">selected projects</p>
           <div class="space-y-6">
 
             <div class="entry-card rounded-lg p-7">
@@ -284,6 +290,77 @@
                 <span class="tag px-2.5 py-1 rounded">Vue 3</span>
                 <span class="tag px-2.5 py-1 rounded">Tailwind CSS</span>
               </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= EXPERIENCE ================= -->
+        <section v-else-if="path==='experience'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">selected work</p>
+          <div class="space-y-6">
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-xl">Founder &amp; Engineer</h3>
+                <span class="field-label">ongoing</span>
+              </div>
+              <p class="text-[var(--brass)] text-sm font-mono mb-3">KuratorPro</p>
+              <p class="text-[var(--paper-dim)] leading-relaxed">
+                Designing and building the platform end to end — the data model
+                behind how a career maps onto a document, the PDF generation
+                pipeline, and the self-hosted infrastructure it all runs on.
+              </p>
+            </div>
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-xl">Founder</h3>
+                <span class="field-label">ongoing</span>
+              </div>
+              <p class="text-[var(--brass)] text-sm font-mono mb-3">Career Document Agency</p>
+              <p class="text-[var(--paper-dim)] leading-relaxed">
+                Running a small service business alongside KuratorPro — CV, cover
+                letter, portfolio, and coaching work delivered directly to clients.
+              </p>
+            </div>
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-xl">Independent Projects</h3>
+                <span class="field-label">ongoing</span>
+              </div>
+              <p class="text-[var(--brass)] text-sm font-mono mb-3">MemeDash &amp; other builds</p>
+              <p class="text-[var(--paper-dim)] leading-relaxed">
+                Full-stack work outside the main product — auth, uploads,
+                moderation, and payments, usually built as a way to explore
+                ideas without the constraints of the core business.
+              </p>
+            </div>
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-xl">Academic Support</h3>
+                <span class="field-label">occasional</span>
+              </div>
+              <p class="text-[var(--brass)] text-sm font-mono mb-3">Research presentations</p>
+              <p class="text-[var(--paper-dim)] leading-relaxed">
+                Helping prepare presentations on economics topics for academic
+                work — turning research into something clear enough to present.
+              </p>
+            </div>
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-xl">Author</h3>
+                <span class="field-label">published</span>
+              </div>
+              <p class="text-[var(--brass)] text-sm font-mono mb-3">Business Ideas (ebook)</p>
+              <p class="text-[var(--paper-dim)] leading-relaxed">
+                Wrote and self-published a practical guide to forming and
+                validating business ideas, handling the cover, copy, and
+                pricing myself.
+              </p>
             </div>
 
           </div>
@@ -398,6 +475,7 @@ const ROUTES = {
   about:    { title: 'About' },
   daas:     { title: 'DaaS' },
   projects: { title: 'Projects' },
+  experience:  { title: 'Experience' },
   tools:    { title: 'Tools' },
   books:    { title: 'Books' },
   gallery:  { title: 'Gallery' },
@@ -416,21 +494,27 @@ createApp({
       _progressTimer: null,
       year: new Date().getFullYear(),
 
+      /* essential nav — kept short. Gallery/Books/Blog live on Home instead. */
       navItems: [
         { key:'home', label:'home' },
         { key:'about', label:'about' },
         { key:'daas', label:'daas' },
         { key:'projects', label:'projects' },
-        { key:'tools', label:'tools' },
+        { key:'experience', label:'experience' },
         { key:'books', label:'books' },
-        { key:'gallery', label:'gallery' },
-        { key:'blog', label:'blog' },
         { key:'contact', label:'contact' }
       ],
       quickLinks: [
         { key:'daas', label:'services' },
         { key:'projects', label:'projects' },
+        { key:'experience', label:'experience' },
         { key:'contact', label:'contact' }
+      ],
+      /* moved off the nav bar, still reachable from Home */
+      moreLinks: [
+        { key:'tools', label:'tools' },
+        { key:'gallery', label:'gallery' },
+        { key:'blog', label:'blog' }
       ],
       services: [
         { title:'CV Writing', desc:'A clean, ATS-aware CV built around your actual experience, not a generic template.' },
