@@ -28,16 +28,6 @@
   .font-display{font-family:'Fraunces', serif;}
   .font-mono{font-family:'JetBrains Mono', monospace;}
 
-  .fade-up{
-    opacity:0;
-    transform:translateY(18px);
-    transition:opacity 0.8s ease, transform 0.8s ease;
-  }
-  .fade-up.is-visible{
-    opacity:1;
-    transform:translateY(0);
-  }
-
   .field-label{
     font-family:'JetBrains Mono', monospace;
     font-size:0.72rem;
@@ -88,161 +78,314 @@
   }
   a.link-underline:hover{ background-size: 100% 1px; }
 
+  /* ---------- routing: top progress bar (cosmetic, fires on every navigate) ---------- */
+  .nav-progress{
+    position:fixed; top:0; left:0; height:2px; background:var(--brass); z-index:60;
+    transition:width .3s ease, opacity .3s ease;
+  }
+
+  /* ---------- routing: page transition (reuses the fade-up timing from v1) ---------- */
+  .page-enter-active{ transition: opacity .5s ease, transform .5s ease; }
+  .page-leave-active{ transition: opacity .2s ease, transform .2s ease; }
+  .page-enter-from{ opacity:0; transform:translateY(14px); }
+  .page-leave-to{ opacity:0; transform:translateY(-8px); }
+
+  /* ---------- mobile nav drawer ---------- */
+  .drawer-enter-active, .drawer-leave-active{ transition: opacity .25s ease; }
+  .drawer-enter-from, .drawer-leave-to{ opacity:0; }
+
+  /* ---------- images: quiet duotone so placeholder photos read as intentional ---------- */
+  .photo-tone{
+    filter: grayscale(0.55) sepia(0.12) contrast(1.03);
+    transition: filter .5s ease;
+  }
+  .photo-tone:hover{ filter:none; }
+
+  /* ---------- gallery: pinterest-style masonry via CSS columns ---------- */
+  .masonry{ column-count:2; column-gap:14px; }
+  @media (min-width:640px){ .masonry{ column-count:3; } }
+  @media (min-width:1024px){ .masonry{ column-count:4; } }
+  .masonry-item{
+    break-inside:avoid;
+    margin-bottom:14px;
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .masonry-item img{ width:100%; display:block; }
+  .masonry-cap{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:8px 10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    color:var(--paper);
+    background:linear-gradient(to top, rgba(20,31,25,0.85), transparent);
+  }
+
   @media (prefers-reduced-motion: reduce){
-    .fade-up{ transition:none; opacity:1; transform:none; }
     .cursor-bar{ animation:none; }
+    .page-enter-active, .page-leave-active{ transition:none; }
   }
 </style>
 </head>
 <body>
 <div id="app" class="min-h-screen">
 
+  <!-- routing: top progress bar -->
+  <div class="nav-progress" :style="{ width: navProgress + '%', opacity: navProgress ? 1 : 0 }"></div>
+
   <!-- Nav -->
-  <header class="fixed top-0 left-0 right-0 z-30 backdrop-blur-sm" :class="scrolled ? 'bg-[#141F19]/80 border-b hairline' : ''">
+  <header class="fixed top-0 left-0 right-0 z-30 backdrop-blur-sm" :class="scrolled ? 'bg-[#141F19]/90 border-b hairline' : ''">
     <div class="max-w-3xl mx-auto px-6 sm:px-8 py-5 flex items-center justify-between">
-      <span class="font-display text-lg tracking-wide">Damian</span>
-      <nav class="hidden sm:flex gap-8 field-label">
-        <a href="#work" class="hover:text-[var(--paper)] transition-colors">work</a>
-        <a href="#notes" class="hover:text-[var(--paper)] transition-colors">notes</a>
-        <a href="#about" class="hover:text-[var(--paper)] transition-colors">about</a>
-        <a href="#contact" class="hover:text-[var(--paper)] transition-colors">contact</a>
+      <a href="#" @click.prevent="SetView('home')" class="font-display text-lg tracking-wide cursor-pointer">Damian</a>
+
+      <!-- desktop nav -->
+      <nav class="hidden md:flex gap-4 lg:gap-5 field-label">
+        <button v-for="item in navItems" :key="item.key"
+                @click="SetView(item.key)"
+                :class="isActive(item.key) ? 'text-[var(--paper)]' : 'hover:text-[var(--paper)] transition-colors'">
+          {{ item.label }}
+        </button>
       </nav>
+
+      <!-- mobile menu toggle -->
+      <button class="md:hidden field-label border hairline rounded px-3 py-1.5" @click="menuOpen = !menuOpen">
+        {{ menuOpen ? 'close' : 'menu' }}
+      </button>
     </div>
+
+    <!-- mobile drawer -->
+    <transition name="drawer">
+      <div v-if="menuOpen" class="md:hidden border-t hairline bg-[#141F19]">
+        <nav class="max-w-3xl mx-auto px-6 py-4 flex flex-col gap-4 field-label">
+          <button v-for="item in navItems" :key="item.key"
+                  @click="SetView(item.key); menuOpen = false"
+                  class="text-left"
+                  :class="isActive(item.key) ? 'text-[var(--paper)]' : ''">
+            {{ item.label }}
+          </button>
+        </nav>
+      </div>
+    </transition>
   </header>
 
-  <!-- Hero -->
-  <section class="max-w-3xl mx-auto px-6 sm:px-8 pt-40 pb-28">
-    <p class="field-label mb-5 fade-up" ref="r0"> software engineer / tech enthusiast</p>
+  <!-- routed content -->
+  <main class="pt-28">
+    <transition name="page" mode="out-in">
+      <div :key="path">
 
-    <h1 class="font-display font-medium text-5xl sm:text-6xl leading-[1.08] mb-8 fade-up" ref="r1">
-      I build the systems<br/>behind how people<br/>present their work<span class="cursor-bar"></span>
-    </h1>
+        <!-- ================= HOME ================= -->
+        <section v-if="path==='home'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <div class="grid sm:grid-cols-[1fr_auto] gap-10 items-start">
+            <div>
+              <p class="field-label mb-5">role <span class="text-[var(--paper-dim)]">/</span> software engineer &amp; founder</p>
+              <h1 class="font-display font-medium text-4xl sm:text-6xl leading-[1.08] mb-8">
+                I build the systems<br/>behind how people<br/>present their work<span class="cursor-bar"></span>
+              </h1>
+              <p class="text-[var(--paper-dim)] text-lg leading-relaxed max-w-xl mb-8">
+                Backend-leaning engineer and solo founder. Most of my time goes into document
+                generation, structured data, and the small infrastructure decisions that make
+                a product feel dependable.
+              </p>
+              <div class="flex flex-wrap gap-x-10 gap-y-3 font-mono text-sm text-[var(--paper-dim)]">
+                <div><span class="text-[var(--brass)]">based:</span> Lagos, Nigeria</div>
+                <div><span class="text-[var(--brass)]">stack:</span> Java · Spring Boot · MongoDB · Vue.js</div>
+              </div>
+            </div>
+            <!-- replace src with your own portrait -->
+            <img src="https://picsum.photos/seed/damian-portrait/360/440"
+                 alt="Damian portrait"
+                 class="photo-tone w-40 sm:w-56 rounded-lg border hairline object-cover" />
+          </div>
 
-    <p class="text-[var(--paper-dim)] text-lg leading-relaxed max-w-xl mb-10 fade-up" ref="r2">
-      Backend-leaning engineer and solo founder. Most of my time goes into document
-      generation, structured data, and the small infrastructure decisions that make
-      a product feel dependable.
-    </p>
+          <div class="flex flex-wrap gap-3 mt-14 field-label">
+            <button v-for="item in quickLinks" :key="item.key" @click="SetView(item.key)"
+                    class="border hairline rounded-full px-4 py-2 hover:border-[var(--brass)] transition-colors">
+              {{ item.label }} →
+            </button>
+          </div>
+        </section>
 
-    <div class="flex flex-wrap gap-x-10 gap-y-3 font-mono text-sm text-[var(--paper-dim)] fade-up" ref="r3">
-      <div><span class="text-[var(--brass)]">based:</span> Lagos, Nigeria</div>
-      <div><span class="text-[var(--brass)]">stack:</span> Java · Spring Boot · MongoDB · Vue.js</div>
-    </div>
-  </section>
+        <!-- ================= ABOUT ================= -->
+        <section v-else-if="path==='about'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-6">about</p>
+          <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl mb-6">
+            I run KuratorPro, a career-document platform, alongside a small agency
+            offering CV, cover letter, and coaching services — so I end up designing
+            the tool and using it, in the same week.
+          </p>
+          <p class="text-[var(--paper-dim)] leading-relaxed max-w-xl">
+            Most days are spent in Spring Boot and MongoDB: modelling how a person's
+            career maps onto a document, generating clean PDFs at scale, and keeping
+            a self-hosted stack running on modest hardware without it falling over.
+            Outside of that, I write about business ideas and occasionally help
+            prepare research presentations on economics topics.
+          </p>
+        </section>
 
-  <!-- About -->
-  <section id="about" class="max-w-3xl mx-auto px-6 sm:px-8 py-20 border-t hairline">
-    <p class="field-label mb-6 fade-up" ref="ra0">about</p>
-    <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl fade-up" ref="ra1">
-      I run KuratorPro, a career-document platform, alongside a small agency
-      offering CV, cover letter, and coaching services — so I end up designing
-      the tool and using it, in the same week.
-    </p>
-    <p class="text-[var(--paper-dim)] leading-relaxed max-w-xl mt-6 fade-up" ref="ra2">
-      Most days are spent in Spring Boot and MongoDB: modelling how a person's
-      career maps onto a document, generating clean PDFs at scale, and keeping
-      a self-hosted stack running on modest hardware without it falling over.
-    </p>
-  </section>
+        <!-- ================= DAAS ================= -->
+        <section v-else-if="path==='daas'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-6">daas — damian as a service</p>
+          <h2 class="font-display text-3xl sm:text-4xl leading-snug mb-6 max-w-xl">
+            Career documents, built the same way I build software — deliberately.
+          </h2>
+          <p class="text-[var(--paper-dim)] leading-relaxed max-w-xl mb-10">
+            A small menu of services for people who'd rather hand this off than
+            fight a template. Pick what you need below.
+          </p>
 
-  <!-- Work -->
-  <section id="work" class="max-w-3xl mx-auto px-6 sm:px-8 py-20 border-t hairline">
-    <p class="field-label mb-10 fade-up" ref="rw0">selected work</p>
+          <div class="space-y-5">
+            <div v-for="service in services" :key="service.title" class="entry-card rounded-lg p-6">
+              <h3 class="font-display text-xl mb-2">{{ service.title }}</h3>
+              <p class="text-[var(--paper-dim)] text-sm leading-relaxed">{{ service.desc }}</p>
+            </div>
+          </div>
 
-    <div class="space-y-6">
+          <button @click="SetView('contact')"
+                  class="mt-10 inline-block font-mono text-sm bg-[var(--brass)] text-[var(--ink)] px-6 py-3 rounded-full hover:bg-[var(--paper)] transition-colors">
+            book a service →
+          </button>
+        </section>
 
-      <div class="entry-card rounded-lg p-7 fade-up" ref="rw1">
-        <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-          <h3 class="font-display text-2xl">KuratorPro</h3>
-          <span class="field-label">product</span>
-        </div>
-        <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-          An AI-assisted CV, cover letter, and portfolio builder. Handles the
-          full path from raw profile data to a polished, ATS-aware document —
-          including a Section → Content → Entry data model, a Playwright-driven
-          PDF engine, and a self-hosted deployment orchestrated with Coolify.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag px-2.5 py-1 rounded">Spring Boot</span>
-          <span class="tag px-2.5 py-1 rounded">MongoDB</span>
-          <span class="tag px-2.5 py-1 rounded">Vue.js</span>
-          <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
-          <span class="tag px-2.5 py-1 rounded">Playwright</span>
-        </div>
+        <!-- ================= PROJECTS ================= -->
+        <section v-else-if="path==='projects'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">selected work</p>
+          <div class="space-y-6">
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-2xl">KuratorPro</h3>
+                <span class="field-label">product</span>
+              </div>
+              <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
+                An AI-assisted CV, cover letter, and portfolio builder. Handles the
+                full path from raw profile data to a polished, ATS-aware document —
+                including a Section → Content → Entry data model, a Playwright-driven
+                PDF engine, and a self-hosted deployment orchestrated with Coolify.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="tag px-2.5 py-1 rounded">Spring Boot</span>
+                <span class="tag px-2.5 py-1 rounded">MongoDB</span>
+                <span class="tag px-2.5 py-1 rounded">Vue.js</span>
+                <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
+                <span class="tag px-2.5 py-1 rounded">Playwright</span>
+              </div>
+            </div>
+
+            <div class="entry-card rounded-lg p-7">
+              <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+                <h3 class="font-display text-2xl">MemeDash</h3>
+                <span class="field-label">product</span>
+              </div>
+              <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
+                A community meme platform built as a side project — auth, uploads,
+                browsing, moderation, and a payment flow for paid media, all wrapped
+                in a lighter, more playful interface than my usual work.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
+                <span class="tag px-2.5 py-1 rounded">Vue 3</span>
+                <span class="tag px-2.5 py-1 rounded">Tailwind CSS</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= TOOLS ================= -->
+        <section v-else-if="path==='tools'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">stack &amp; tools</p>
+
+          <div class="space-y-5 font-mono text-sm mb-14">
+            <div class="flex gap-4"><span class="text-[var(--brass)] shrink-0 w-28">notif/</span><span class="text-[var(--paper-dim)]">SSE notification system with per-user emitter registry, retry logic, and dead-emitter cleanup.</span></div>
+            <div class="flex gap-4"><span class="text-[var(--brass)] shrink-0 w-28">rate-limit/</span><span class="text-[var(--paper-dim)]">Redis-backed distributed rate limiting with Bucket4j and Lettuce.</span></div>
+            <div class="flex gap-4"><span class="text-[var(--brass)] shrink-0 w-28">ocr/</span><span class="text-[var(--paper-dim)]">PDF and DOCX text extraction via Apache Tika, backed by a containerized Tesseract sidecar.</span></div>
+            <div class="flex gap-4"><span class="text-[var(--brass)] shrink-0 w-28">deploy/</span><span class="text-[var(--paper-dim)]">Multi-service stack on a single 4GB box, orchestrated with Coolify, with native image builds handled off-box.</span></div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-6">
+            <div v-for="group in toolGroups" :key="group.category" class="entry-card rounded-lg p-6">
+              <h4 class="field-label mb-3">{{ group.category }}</h4>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="t in group.items" :key="t" class="tag px-2.5 py-1 rounded">{{ t }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BOOKS ================= -->
+        <section v-else-if="path==='books'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">books &amp; guides</p>
+
+          <div class="space-y-6">
+            <div class="entry-card rounded-lg p-7 flex flex-col sm:flex-row gap-6">
+              <!-- replace src with your real cover -->
+              <img src="https://picsum.photos/seed/business-ideas-cover/240/320"
+                   alt="Business Ideas ebook cover"
+                   class="photo-tone w-28 sm:w-32 rounded border hairline object-cover shrink-0" />
+              <div>
+                <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+                  <h3 class="font-display text-2xl">Business Ideas</h3>
+                  <span class="field-label">ebook</span>
+                </div>
+                <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
+                  A short, practical guide to forming and validating business ideas —
+                  cover, copy, and pricing all handled end to end.
+                </p>
+                <div class="flex flex-wrap gap-4 font-mono text-sm">
+                  <a href="#" class="link-underline text-[var(--paper)]">Get it on Selar</a>
+                  <a href="#" class="link-underline text-[var(--paper)]">Get it on Gumroad</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="entry-card rounded-lg p-7 border-dashed">
+              <p class="text-[var(--paper-dim)] text-sm font-mono">more guides in progress — check back soon.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= GALLERY ================= -->
+        <section v-else-if="path==='gallery'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">gallery</p>
+          <!-- replace seeds below with your own photos -->
+          <div class="masonry">
+            <div class="masonry-item" v-for="photo in galleryPhotos" :key="photo.seed">
+              <img :src="'https://picsum.photos/seed/' + photo.seed + '/' + photo.w + '/' + photo.h" class="photo-tone" :alt="photo.caption" />
+              <div class="masonry-cap">{{ photo.caption }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BLOG ================= -->
+        <section v-else-if="path==='blog'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-10">blog</p>
+          <div class="entry-card rounded-lg p-8 text-center">
+            <p class="font-display text-2xl mb-3">Notes, coming soon.</p>
+            <p class="text-[var(--paper-dim)] text-sm max-w-md mx-auto leading-relaxed">
+              Long-form writing on building KuratorPro, engineering decisions,
+              and small business lessons. Nothing published here yet.
+            </p>
+          </div>
+        </section>
+
+        <!-- ================= CONTACT ================= -->
+        <section v-else-if="path==='contact'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <p class="field-label mb-6">contact</p>
+          <h3 class="font-display text-3xl sm:text-4xl leading-snug mb-8 max-w-lg">
+            Open to conversations about products, systems, or the odd career document.
+          </h3>
+          <div class="flex flex-wrap gap-x-10 gap-y-3 font-mono text-sm">
+            <a href="mailto:hello@example.com" class="link-underline text-[var(--paper)]">hello@example.com</a>
+            <a href="#" class="link-underline text-[var(--paper-dim)]">github</a>
+            <a href="#" class="link-underline text-[var(--paper-dim)]">linkedin</a>
+          </div>
+        </section>
+
       </div>
-
-      <div class="entry-card rounded-lg p-7 fade-up" ref="rw2">
-        <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-          <h3 class="font-display text-2xl">MemeDash</h3>
-          <span class="field-label">product</span>
-        </div>
-        <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-          A community meme platform built as a side project — auth, uploads,
-          browsing, moderation, and a payment flow for paid media, all wrapped
-          in a lighter, more playful interface than my usual work.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
-          <span class="tag px-2.5 py-1 rounded">Vue 3</span>
-          <span class="tag px-2.5 py-1 rounded">Tailwind CSS</span>
-        </div>
-      </div>
-
-      <div class="entry-card rounded-lg p-7 fade-up" ref="rw3">
-        <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-          <h3 class="font-display text-2xl">Business Ideas, an ebook</h3>
-          <span class="field-label">writing</span>
-        </div>
-        <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-          A short, practical guide to forming and validating business ideas,
-          written and self-published — cover, copy, and pricing all handled
-          end to end, available on Selar and Gumroad.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="tag px-2.5 py-1 rounded">Selar</span>
-          <span class="tag px-2.5 py-1 rounded">Gumroad</span>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Engineering notes -->
-  <section id="notes" class="max-w-3xl mx-auto px-6 sm:px-8 py-20 border-t hairline">
-    <p class="field-label mb-10 fade-up" ref="rn0">engineering notes</p>
-
-    <div class="space-y-5 font-mono text-sm">
-      <div class="flex gap-4 fade-up" ref="rn1">
-        <span class="text-[var(--brass)] shrink-0">notif/</span>
-        <span class="text-[var(--paper-dim)]">SSE notification system with per-user emitter registry, retry logic, and dead-emitter cleanup.</span>
-      </div>
-      <div class="flex gap-4 fade-up" ref="rn2">
-        <span class="text-[var(--brass)] shrink-0">rate-limit/</span>
-        <span class="text-[var(--paper-dim)]">Redis-backed distributed rate limiting with Bucket4j and Lettuce.</span>
-      </div>
-      <div class="flex gap-4 fade-up" ref="rn3">
-        <span class="text-[var(--brass)] shrink-0">ocr/</span>
-        <span class="text-[var(--paper-dim)]">PDF and DOCX text extraction via Apache Tika, backed by a containerized Tesseract sidecar.</span>
-      </div>
-      <div class="flex gap-4 fade-up" ref="rn4">
-        <span class="text-[var(--brass)] shrink-0">deploy/</span>
-        <span class="text-[var(--paper-dim)]">Multi-service stack on a single 4GB box, orchestrated with Coolify, with native image builds handled off-box.</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="max-w-3xl mx-auto px-6 sm:px-8 py-24 border-t hairline">
-    <p class="field-label mb-6 fade-up" ref="rc0">contact</p>
-    <h3 class="font-display text-3xl sm:text-4xl leading-snug mb-8 max-w-lg fade-up" ref="rc1">
-      Open to conversations about products, systems, or the odd career document.
-    </h3>
-    <div class="flex flex-wrap gap-x-10 gap-y-3 font-mono text-sm fade-up" ref="rc2">
-      <a href="mailto:hello@example.com" class="link-underline text-[var(--paper)]">hello@example.com</a>
-      <a href="#" class="link-underline text-[var(--paper-dim)]">github</a>
-      <a href="#" class="link-underline text-[var(--paper-dim)]">linkedin</a>
-    </div>
-  </section>
+    </transition>
+  </main>
 
   <footer class="max-w-3xl mx-auto px-6 sm:px-8 py-10 border-t hairline field-label flex justify-between">
     <span>© {{ year }} Damian</span>
@@ -252,34 +395,115 @@
 </div>
 
 <script>
+/* ===================== ROUTES ===================== */
+/* flat, single-level route table — each key is one "page" of the SPA */
+const ROUTES = {
+  home:     { title: 'Home' },
+  about:    { title: 'About' },
+  daas:     { title: 'DaaS' },
+  projects: { title: 'Projects' },
+  tools:    { title: 'Tools' },
+  books:    { title: 'Books' },
+  gallery:  { title: 'Gallery' },
+  blog:     { title: 'Blog' },
+  contact:  { title: 'Contact' }
+};
+
 const { createApp } = Vue;
 createApp({
   data(){
     return {
+      path: 'home',
+      menuOpen: false,
       scrolled: false,
-      year: new Date().getFullYear()
+      navProgress: 0,
+      _progressTimer: null,
+      year: new Date().getFullYear(),
+
+      navItems: [
+        { key:'home', label:'home' },
+        { key:'about', label:'about' },
+        { key:'daas', label:'daas' },
+        { key:'projects', label:'projects' },
+        { key:'tools', label:'tools' },
+        { key:'books', label:'books' },
+        { key:'gallery', label:'gallery' },
+        { key:'blog', label:'blog' },
+        { key:'contact', label:'contact' }
+      ],
+      quickLinks: [
+        { key:'daas', label:'services' },
+        { key:'projects', label:'projects' },
+        { key:'contact', label:'contact' }
+      ],
+      services: [
+        { title:'CV Writing', desc:'A clean, ATS-aware CV built around your actual experience, not a generic template.' },
+        { title:'Cover Letter Writing', desc:'A short, specific letter written for one role, not recycled for every application.' },
+        { title:'Portfolio Building', desc:'A simple, well-organized portfolio site or page that shows your work clearly.' },
+        { title:'Career Coaching', desc:'A working session to sort out direction, positioning, and what to fix next.' }
+      ],
+      toolGroups: [
+        { category:'backend', items:['Java','Spring Boot'] },
+        { category:'data', items:['MongoDB','Redis'] },
+        { category:'frontend', items:['Vue.js','Thymeleaf','Tailwind CSS'] },
+        { category:'infra & documents', items:['Coolify','Docker','GraalVM','Playwright','docx4j','Apache Tika'] }
+      ],
+      /* replace seeds/captions with your own photos */
+      galleryPhotos: [
+        { seed:'damian-1', w:500, h:650, caption:'workspace' },
+        { seed:'damian-2', w:500, h:420, caption:'lagos' },
+        { seed:'damian-3', w:500, h:560, caption:'notes' },
+        { seed:'damian-4', w:500, h:380, caption:'desk setup' },
+        { seed:'damian-5', w:500, h:600, caption:'city' },
+        { seed:'damian-6', w:500, h:460, caption:'coffee' }
+      ]
     };
   },
   methods: {
-    onScroll(){
-      this.scrolled = window.scrollY > 8;
+    /* ---- routing core, reused from the SPA router pattern ---- */
+    parseHash(){
+      return (location.hash.replace(/^#\/?/, '') || 'home');
     },
-    setupReveal(){
-      const els = Object.values(this.$refs).filter(Boolean);
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting){
-            entry.target.classList.add('is-visible');
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-      els.forEach(el => io.observe(el));
-    }
+    resolveWithDefaults(key){
+      return ROUTES[key] ? key : 'home';
+    },
+    syncFromUrl(){
+      const finalKey = this.resolveWithDefaults(this.parseHash());
+      const target = '#/' + finalKey;
+      if (location.hash !== target){
+        history.replaceState(null, '', target);
+      }
+      this.path = finalKey;
+      document.title = ROUTES[finalKey].title + ' — Damian';
+      window.scrollTo(0, 0);
+    },
+    navigate(key){
+      this.startProgress();
+      const finalKey = this.resolveWithDefaults(key);
+      const target = '#/' + finalKey;
+      if (location.hash === target){
+        this.path = finalKey;
+      } else {
+        location.hash = target;
+      }
+    },
+    SetView(key){ this.navigate(key); },
+    goToView(key){ this.navigate(key); },
+    startProgress(){
+      clearTimeout(this._progressTimer);
+      this.navProgress = 30;
+      this._progressTimer = setTimeout(() => {
+        this.navProgress = 100;
+        setTimeout(() => { this.navProgress = 0; }, 200);
+      }, 100);
+    },
+    isActive(key){ return this.path === key; },
+    onScroll(){ this.scrolled = window.scrollY > 8; }
   },
   mounted(){
+    window.addEventListener('hashchange', this.syncFromUrl);
     window.addEventListener('scroll', this.onScroll);
-    this.$nextTick(() => this.setupReveal());
+    this.syncFromUrl();
   }
 }).mount('#app');
 </script>
