@@ -689,10 +689,9 @@
           <!-- ================= GALLERY ================= -->
           <section v-else-if="path==='gallery'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-10">gallery</p>
-            <!-- replace seeds below with your own photos -->
             <div class="masonry">
-              <div class="masonry-item" v-for="photo in galleryPhotos" :key="photo.seed">
-                <img :src="'https://picsum.photos/seed/' + photo.seed + '/' + photo.w + '/' + photo.h"
+              <div class="masonry-item" v-for="photo in galleryPhotos" :key="photo.name">
+                <img :src="photo.src"
                   class="photo-tone" :alt="photo.caption" />
                 <div class="masonry-cap">{{ photo.caption }}</div>
               </div>
@@ -937,12 +936,12 @@
           ],
           /* replace seeds/captions with your own photos */
           galleryPhotos: [
-            { seed: "damian-1", w: 500, h: 650, caption: "workspace" },
-            { seed: "damian-2", w: 500, h: 420, caption: "lagos" },
-            { seed: "damian-3", w: 500, h: 560, caption: "notes" },
-            { seed: "damian-4", w: 500, h: 380, caption: "desk setup" },
-            { seed: "damian-5", w: 500, h: 600, caption: "city" },
-            { seed: "damian-6", w: 500, h: 460, caption: "coffee" },
+            { name: "damian-1", src: "https://github.com/damintel/damintel.github.io/blob/main/Dam-Me-Logo.png?raw=true", w: 500, h: 650, caption: "d-logo" },
+            { name: "damian-2", src: "https://github.com/damintel/damintel.github.io/blob/main/Damian-Logo.png?raw=true", w: 500, h: 420, caption: "damian logo" },
+            { name: "damian-3", src: "https://github.com/damintel/damintel.github.io/blob/main/Damian-Me-Logo.png?raw=true", w: 500, h: 560, caption: "damian square logo" },
+            { name: "damian-4", src: "https://github.com/damintel/damintel.github.io/blob/main/Damintel-Logo.png?raw=true", w: 500, h: 380, caption: "damintel logo" },
+            { name: "damian-5", src: "https://github.com/damintel/damintel.github.io/blob/main/Damintel-Me-Logo.png?raw=true", w: 500, h: 600, caption: "damintel square logo" },
+            { name: "damian-6", src: "https://github.com/damintel/damintel.github.io/blob/main/dami-stu.png?raw=true", w: 500, h: 460, caption: "damian" },
           ],
         };
       },
