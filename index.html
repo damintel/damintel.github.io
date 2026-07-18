@@ -301,7 +301,7 @@
       <transition name="page" mode="out-in">
         <div :key="path">
           <!-- ================= HOME ================= -->
-          <section v-if="path==='home'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <section v-if="path==='home'" class="max-w-3xl mx-auto px-5 sm:px-8 pb-28">
             <div class="relative rounded-2xl overflow-hidden mb-2">
               <!-- backdrop: replace src with your own photo -->
               <img src="https://picsum.photos/seed/damian-hero/1200/900" alt="" class="hero-backdrop" />
@@ -328,7 +328,7 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3 mt-2 field-label">
+            <div class="flex flex-wrap gap-3 mt-4 field-label">
               <button v-for="item in quickLinks" :key="item.key" @click="SetView(item.key)"
                 class="border hairline rounded-full px-4 py-2 hover:border-[var(--brass)] transition-colors">
                 {{ item.label }} →
