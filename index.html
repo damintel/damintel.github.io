@@ -241,21 +241,27 @@
         transition: none;
       }
     }
+
+    [v-cloak] {
+        display: none;
+    }
   </style>
+  <base target="_blank">
 </head>
 
 <body>
-  <div id="app" class="min-h-screen">
+  <div v-cloak id="app" class="min-h-screen">
     <!-- routing: top progress bar -->
     <div class="nav-progress" :style="{ width: navProgress + '%', opacity: navProgress ? 1 : 0 }"></div>
 
     <header class="fixed top-0 left-0 right-0 z-30 backdrop-blur-sm"
       :class="scrolled ? 'bg-[#141F19]/90 border-b hairline' : ''">
       <div class="relative w-full px-6 sm:px-8 py-5 flex items-center justify-between">
-        
+
         <a href="#" @click.prevent="SetView('home')"
           class="flex items-center gap-0.5 font-display text-lg tracking-wide cursor-pointer">
-          <img src="https://github.com/damintel/damintel.github.io/blob/main/Dlogo.png?raw=true" alt="Damintel Logo" class="h-3 w-3 object-contain" />
+          <img src="https://github.com/damintel/damintel.github.io/blob/main/Dlogo.png?raw=true" alt="Damintel Logo"
+            class="h-3 w-3 object-contain" />
           amintel
         </a>
 
@@ -318,9 +324,8 @@
                       work<span class="cursor-bar"></span>
                     </h1>
                     <p class="text-[var(--paper-dim)] text-lg leading-relaxed max-w-xl mb-8">
-                      Fullstack developer, mostly backend-leaning engineer and
-                      technical founder. Most of my time goes into building
-                      solutions and making the small infrastructure decisions
+                      Solutions architect, technical founder. Most of my time goes into building
+                      software and making the small infrastructure decisions
                       that make a product feel dependable.
                     </p>
                   </div>
@@ -417,50 +422,50 @@
             <p class="field-label mt-6 mb-6">about damintel</p>
 
             <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl mb-8">
-                Hello, Welcome to Damintel.
+              Hello, Welcome to Damintel.
             </p>
 
             <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed max-w-2xl">
 
-                <p>
-                    <strong>Damintel</strong> is my personal brand and platform where I
-                    explore the intersection of <strong>Technology</strong>,
-                    <strong>Media</strong>, <strong>Business</strong>, and
-                    <strong>Lifestyle</strong>. It's a space for sharing ideas,
-                    experiences, and insights on how these industries shape one another and
-                    influence the world around us.
-                </p>
+              <p>
+                <strong>Damintel</strong> is my personal brand and platform where I
+                explore the intersection of <strong>Technology</strong>,
+                <strong>Media</strong>, <strong>Business</strong>, and
+                <strong>Lifestyle</strong>. It's a space for sharing ideas,
+                experiences, and insights on how these industries shape one another and
+                influence the world around us.
+              </p>
 
-                <p>
-                    The name <strong>Damintel</strong> is a combination of
-                    <strong>Damian</strong> and <strong>Intelligence</strong>. Intelligence
-                    here isn't about IQ, it's about information, knowledge, data, and
-                    meaningful conversations that help us better understand an increasingly
-                    connected world.
-                </p>
+              <p>
+                The name <strong>Damintel</strong> is a combination of
+                <strong>Damian</strong> and <strong>Intelligence</strong>. Intelligence
+                here isn't about IQ, it's about information, knowledge, data, and
+                meaningful conversations that help us better understand an increasingly
+                connected world.
+              </p>
 
-                <p>
-                    At Damintel, I believe no industry exists in isolation. Technology
-                    drives business. Business influences media. Media shapes culture and
-                    lifestyle. In turn, lifestyle creates new opportunities for innovation.
-                    Every breakthrough, trend, or disruption creates a ripple effect across
-                    the others, and that's exactly what makes these conversations so
-                    interesting.
-                </p>
+              <p>
+                At Damintel, I believe no industry exists in isolation. Technology
+                drives business. Business influences media. Media shapes culture and
+                lifestyle. In turn, lifestyle creates new opportunities for innovation.
+                Every breakthrough, trend, or disruption creates a ripple effect across
+                the others, and that's exactly what makes these conversations so
+                interesting.
+              </p>
 
-                <p>
-                    Whether we're discussing software development, artificial intelligence,
-                    startups, digital products, content creation, entrepreneurship,
-                    emerging technologies, or the future of work, the goal remains the
-                    same: to connect the dots, simplify complex ideas, and explore how they
-                    impact our everyday lives.
-                </p>
+              <p>
+                Whether we're discussing software development, artificial intelligence,
+                startups, digital products, content creation, entrepreneurship,
+                emerging technologies, or the future of work, the goal remains the
+                same: to connect the dots, simplify complex ideas, and explore how they
+                impact our everyday lives.
+              </p>
 
-                <p>
-                    If you're curious about the future, passionate about technology, or
-                    simply enjoy thoughtful conversations about where the world is heading,
-                    welcome to Damintel. I'm glad you're here.
-                </p>
+              <p>
+                If you're curious about the future, passionate about technology, or
+                simply enjoy thoughtful conversations about where the world is heading,
+                welcome to Damintel. I'm glad you're here.
+              </p>
 
             </div>
 
@@ -499,12 +504,12 @@
               <div v-for="product in products" :key="product.title" class="entry-card rounded-lg p-7">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
                   <h3 class="font-display text-2xl">{{ product.title }}</h3>
-                  <span class="field-label">product</span>
                 </div>
                 <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
                   {{ product.desc }}
                 </p>
-                <a href="#" class="link-underline text-[var(--paper)] font-mono text-sm">
+                <a :href="product.url" class="link-underline text-[var(--paper)] font-mono text-sm" target="_blank"
+                  rel="noopener noreferrer">
                   <span class="tag px-2.5 py-1 rounded">view product</span>
                 </a>
               </div>
@@ -515,42 +520,16 @@
           <section v-else-if="path==='projects'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-10">selected projects</p>
             <div class="space-y-6">
-              <div class="entry-card rounded-lg p-7">
+              <div v-for="project in projects" :key="project.title" class="entry-card rounded-lg p-7">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-2xl">KuratorPro</h3>
-                  <span class="field-label">product</span>
+                  <h3 class="font-display text-2xl">{{ project.title }}</h3>
+                  <a :href="project.url" class="field-label" target="_blank" rel="noopener noreferrer">view project</a>
                 </div>
                 <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-                  An AI-assisted CV, cover letter, and portfolio builder.
-                  Handles the full path from raw profile data to a polished,
-                  ATS-aware document — including a Section → Content → Entry
-                  data model, a Playwright-driven PDF engine, and a
-                  self-hosted deployment orchestrated with Coolify.
+                  {{ project.desc }}
                 </p>
                 <div class="flex flex-wrap gap-2">
-                  <span class="tag px-2.5 py-1 rounded">Spring Boot</span>
-                  <span class="tag px-2.5 py-1 rounded">MongoDB</span>
-                  <span class="tag px-2.5 py-1 rounded">Vue.js</span>
-                  <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
-                  <span class="tag px-2.5 py-1 rounded">Playwright</span>
-                </div>
-              </div>
-
-              <div class="entry-card rounded-lg p-7">
-                <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-2xl">MemeDash</h3>
-                  <span class="field-label">product</span>
-                </div>
-                <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-                  A community meme platform built as a side project — auth,
-                  uploads, browsing, moderation, and a payment flow for paid
-                  media, all wrapped in a lighter, more playful interface than
-                  my usual work.
-                </p>
-                <div class="flex flex-wrap gap-2">
-                  <span class="tag px-2.5 py-1 rounded">Thymeleaf</span>
-                  <span class="tag px-2.5 py-1 rounded">Vue 3</span>
-                  <span class="tag px-2.5 py-1 rounded">Tailwind CSS</span>
+                  <span v-for="tag in project.tags" :key="tag" class="tag px-2.5 py-1 rounded">{{ tag }}</span>
                 </div>
               </div>
             </div>
@@ -560,79 +539,16 @@
           <section v-else-if="path==='experience'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-10">work experience</p>
             <div class="space-y-6">
-              <div class="entry-card rounded-lg p-7">
+              <div v-for="exp in experiences" :key="exp.title" class="entry-card rounded-lg p-7">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-xl">Founder &amp; Engineer</h3>
-                  <span class="field-label">ongoing</span>
+                  <h3 class="font-display text-xl">{{ exp.title }}</h3>
+                  <span class="field-label">{{ exp.status }}</span>
                 </div>
                 <p class="text-[var(--brass)] text-sm font-mono mb-3">
-                  KuratorPro
+                  {{ exp.company }}
                 </p>
                 <p class="text-[var(--paper-dim)] leading-relaxed">
-                  Designing and building the platform end to end — the data
-                  model behind how a career maps onto a document, the PDF
-                  generation pipeline, and the self-hosted infrastructure it
-                  all runs on.
-                </p>
-              </div>
-
-              <div class="entry-card rounded-lg p-7">
-                <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-xl">Founder</h3>
-                  <span class="field-label">ongoing</span>
-                </div>
-                <p class="text-[var(--brass)] text-sm font-mono mb-3">
-                  Career Document Agency
-                </p>
-                <p class="text-[var(--paper-dim)] leading-relaxed">
-                  Running a small service business alongside KuratorPro — CV,
-                  cover letter, portfolio, and coaching work delivered
-                  directly to clients.
-                </p>
-              </div>
-
-              <div class="entry-card rounded-lg p-7">
-                <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-xl">Independent Projects</h3>
-                  <span class="field-label">ongoing</span>
-                </div>
-                <p class="text-[var(--brass)] text-sm font-mono mb-3">
-                  MemeDash &amp; other builds
-                </p>
-                <p class="text-[var(--paper-dim)] leading-relaxed">
-                  Full-stack work outside the main product — auth, uploads,
-                  moderation, and payments, usually built as a way to explore
-                  ideas without the constraints of the core business.
-                </p>
-              </div>
-
-              <div class="entry-card rounded-lg p-7">
-                <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-xl">Academic Support</h3>
-                  <span class="field-label">occasional</span>
-                </div>
-                <p class="text-[var(--brass)] text-sm font-mono mb-3">
-                  Research presentations
-                </p>
-                <p class="text-[var(--paper-dim)] leading-relaxed">
-                  Helping prepare presentations on economics topics for
-                  academic work — turning research into something clear enough
-                  to present.
-                </p>
-              </div>
-
-              <div class="entry-card rounded-lg p-7">
-                <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <h3 class="font-display text-xl">Author</h3>
-                  <span class="field-label">published</span>
-                </div>
-                <p class="text-[var(--brass)] text-sm font-mono mb-3">
-                  Business Ideas (ebook)
-                </p>
-                <p class="text-[var(--paper-dim)] leading-relaxed">
-                  Wrote and self-published a practical guide to forming and
-                  validating business ideas, handling the cover, copy, and
-                  pricing myself.
+                  {{ exp.desc }}
                 </p>
               </div>
             </div>
@@ -657,23 +573,22 @@
             <p class="field-label mb-10">books &amp; guides</p>
 
             <div class="space-y-6">
-              <div class="entry-card rounded-lg p-7 flex flex-col sm:flex-row gap-6">
-                <!-- replace src with your real cover -->
-                <img src="https://picsum.photos/seed/business-ideas-cover/240/320" alt="Business Ideas ebook cover"
+              <div v-for="book in books" :key="book.title"
+                class="entry-card rounded-lg p-7 flex flex-col sm:flex-row gap-6">
+                <img :src="book.cover" :alt="book.alt"
                   class="photo-tone w-28 sm:w-32 rounded border hairline object-cover shrink-0" />
                 <div>
                   <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
                     <h3 class="font-display text-2xl">
-                      The Business Idea That Works
+                      {{ book.title }}
                     </h3>
-                    <span class="field-label">ebook</span>
+                    <span class="field-label">{{ book.type }}</span>
                   </div>
                   <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
-                    A short, practical guide to forming and validating
-                    business ideas.
+                    {{ book.desc }}
                   </p>
                   <div class="flex flex-wrap gap-4 font-mono text-sm">
-                    <a href="#" class="link-underline text-[var(--paper)]">Get Book</a>
+                    <a :href="book.linkHref" class="border hairline rounded-full px-4 py-2 sm:text-xs text-[var(--paper-dim)] hover:border-[var(--brass)] hover:text-[var(--paper)] transition-colors link-underline text-[var(--paper)]">{{ book.linkText }}</a>
                   </div>
                 </div>
               </div>
@@ -691,8 +606,7 @@
             <p class="field-label mb-10">gallery</p>
             <div class="masonry">
               <div class="masonry-item" v-for="photo in galleryPhotos" :key="photo.name">
-                <img :src="photo.src"
-                  class="photo-tone" :alt="photo.caption" />
+                <img :src="photo.src" class="photo-tone" :alt="photo.caption" />
                 <div class="masonry-cap">{{ photo.caption }}</div>
               </div>
             </div>
@@ -701,12 +615,20 @@
           <!-- ================= BLOG ================= -->
           <section v-else-if="path==='blog'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-10">blog</p>
-            <div class="entry-card rounded-lg p-8 text-center">
+            <div  v-if="blogPosts.length === 1" class="entry-card rounded-lg p-8 text-center">
               <p class="font-display text-2xl mb-3">Notes, coming soon.</p>
               <p class="text-[var(--paper-dim)] text-sm max-w-md mx-auto leading-relaxed">
                 Long-form writing on Tech, Media, Lifestyle, Business &
                 Productivity. Nothing published here yet.
               </p>
+            </div>
+            <div v-else class="space-y-6">
+              <div v-for="post in blogPosts" :key="post.title" class="entry-card rounded-lg p-8 text-center">
+                <p class="font-display text-2xl mb-3">{{ post.title }}</p>
+                <p class="text-[var(--paper-dim)] text-sm max-w-md mx-auto leading-relaxed">
+                  {{ post.content }}
+                </p>
+              </div>
             </div>
           </section>
 
@@ -727,11 +649,21 @@
                   <path d="M2 8L10 13L12 14L14 13L22 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" />
                 </svg>
-                hello@example.com
+                ugbahdamian@kuratorpro.com
+              </a>
+
+              <!-- LinkedIn -->
+              <a href="https://www.linkedin.com/in/damian-thomas-5884b4288?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener"
+                class="link-underline text-[var(--paper-dim)] flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+                LinkedIn
               </a>
 
               <!-- X (Twitter) -->
-              <a href="https://x.com/username" target="_blank" rel="noopener"
+              <a href="https://x.com/damian_stu?t=itqrXATKOhGwqJJje6GKXw&s=09" target="_blank" rel="noopener"
                 class="link-underline text-[var(--paper-dim)] flex items-center gap-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true">
@@ -742,7 +674,7 @@
               </a>
 
               <!-- TikTok -->
-              <a href="https://www.tiktok.com/@username" target="_blank" rel="noopener"
+              <a href="https://www.tiktok.com/@damintel?_r=1&_t=ZS-98J5q2JklDo" target="_blank" rel="noopener"
                 class="link-underline text-[var(--paper-dim)] flex items-center gap-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true">
@@ -753,7 +685,7 @@
               </a>
 
               <!-- YouTube -->
-              <a href="https://youtube.com/channel/yourchannel" target="_blank" rel="noopener"
+              <a href="https://youtube.com/@damintel?si=K1MtyPSmTPM__0et" target="_blank" rel="noopener"
                 class="link-underline text-[var(--paper-dim)] flex items-center gap-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true">
@@ -768,19 +700,19 @@
             <div class="mt-16">
               <h4 class="font-display text-2xl mb-6">Send me a message</h4>
 
-              <form action="mailto:hello@example.com" method="post" enctype="text/plain" class="space-y-8">
+              <form action="mailto:ugbahdamian@kuratorpro.com" method="post" enctype="text/plain" class="space-y-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Name</label>
                     <input type="text" name="name"
                       class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors"
-                      placeholder="John Doe" required>
+                      placeholder="Enter your name" required>
                   </div>
                   <div>
                     <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Email</label>
                     <input type="email" name="email"
                       class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors"
-                      placeholder="you@example.com" required>
+                      placeholder="Enter email address" required>
                   </div>
                 </div>
 
@@ -812,10 +744,14 @@
 
     <footer class="max-w-3xl mx-auto px-6 sm:px-8 py-10 border-t hairline field-label flex justify-between">
       <span>© {{ year }} Damintel</span>
-      
-      <a href="#" @click.prevent="SetView('home')"
-        class="flex items-center gap-0.5">
-        <img src="https://github.com/damintel/damintel.github.io/blob/main/Dlogo.png?raw=true" alt="Damintel Logo" class="h-2 w-2 object-contain" />
+
+      <button @click="downloadResume" class="field-label">
+        Resume
+      </button>
+
+      <a href="#" @click.prevent="SetView('home')" class="flex items-center gap-0.5">
+        <img src="https://github.com/damintel/damintel.github.io/blob/main/Dlogo.png?raw=true" alt="Damintel Logo"
+          class="h-2 w-2 object-contain" />
         <span class="font-display text-white">amintel</span>
       </a>
     </footer>
@@ -873,12 +809,16 @@
           ],
           services: [
             {
-              title: "Solutions Architecture",
-              desc: "Designing and implementing scalable software solutions. Including system design, architectural planning and growth funnel.",
+              title: "Software Solutions",
+              desc: "Building software solutions from scratch, including web apps, mobile apps, APIs, AI and automation tools/workflows.",
             },
             {
               title: "IT Support",
               desc: "Comprehensive IT support services to keep your systems running smoothly.",
+            },
+            {
+              title: "Solutions Architecture",
+              desc: "Designing and implementing scalable solutions. Including system design, architectural planning and growth funnel.",
             },
             {
               title: "CV Writing",
@@ -900,19 +840,27 @@
           products: [
             {
               title: "KuratorPro",
+              url: "https://kuratorpro.com",
               desc: "An AI-assisted CV, cover letter, and portfolio builder — the core product behind the agency."
             },
             {
               title: "MemeDash",
+              url: "https://memedash.com",
               desc: "A community meme platform with uploads, moderation, and paid media."
+            }
+          ],
+          projects: [
+            {
+              title: "KuratorPro",
+              url: "https://kuratorpro.com",
+              desc: "An AI-powered CV, cover letter, and portfolio builder. Handles the full path from raw profile data to a polished, ATS-aware document creation and generation, Playwright-driven PDF engine, and a self-hosted deployment orchestrated with Coolify.",
+              tags: ["Spring Boot", "MongoDB", "Vue.js", "Thymeleaf", "Playwright"]
             },
             {
-              title: "Whisper",
-              desc: "An anonymous querying and game web app."
-            },
-            {
-              title: "Webtil",
-              desc: "An internet web utility hub."
+              title: "MemeDash",
+              url: "https://memedash.com",
+              desc: "A community meme platform built as a side project. Uploads, browsing, moderation, and a payment flow for paid media, all wrapped in a lighter, more playful interface than my usual work.",
+              tags: ["Spring Boot", "Thymeleaf", "Vue 3", "Tailwind CSS"]
             },
           ],
           toolGroups: [
@@ -923,7 +871,7 @@
               items: ["Vue.js", "Thymeleaf", "Tailwind CSS"],
             },
             {
-              category: "infra & documents",
+              category: "infrastructure & devops",
               items: [
                 "Coolify",
                 "Docker",
@@ -934,7 +882,46 @@
               ],
             },
           ],
-          /* replace seeds/captions with your own photos */
+          experiences: [
+            {
+              title: "IT Officer",
+              status: "2021 - present",
+              company: "Mseve Initiative",
+              desc: "An NGO that provides education/support to women and girls. I manage the IT infrastructure, including network setup, hardware maintenance, and software solutions to enhance learning experiences."
+            },
+            {
+              title: "Founder & Engineer",
+              status: "ongoing",
+              company: "KuratorPro",
+              desc: "Designing and building the platform end to end, the data model behind how a career maps onto a document, the PDF generation pipeline, and the self-hosted infrastructure it all runs on."
+            },
+            {
+              title: "Independent Projects",
+              status: "ongoing",
+              company: "",
+              desc: "Full-stack projects i personally work on that involve authentication and authorization, uploads/downloads, moderation, data processing/pipeline, and payments, usually built as a way to explore ideas, learn and improve my skills."
+            }
+          ],
+          books: [
+            {
+              cover: "https://github.com/damintel/damintel.github.io/blob/main/IDEA-FORMATION-COVER.jpg?raw=true",
+              alt: "Business Ideas ebook cover",
+              title: "The Business Idea That Works",
+              type: "ebook",
+              desc: "A short, practical guide to forming and validating business ideas.",
+              linkText: "Get Book",
+              linkHref: "https://selar.com/61511x1955"
+            },
+          ],
+          blogPosts: [
+            {
+              title: "Notes, coming soon.",
+              cover: "",
+              content: "Long-form writing on Tech, Media, Lifestyle, Business & Productivity. Nothing published here yet.",
+              date: "",
+              tags: []
+            },
+          ],
           galleryPhotos: [
             { name: "damian-1", src: "https://github.com/damintel/damintel.github.io/blob/main/Dam-Me-Logo.png?raw=true", w: 500, h: 650, caption: "d-logo" },
             { name: "damian-2", src: "https://github.com/damintel/damintel.github.io/blob/main/Damian-Logo.png?raw=true", w: 500, h: 420, caption: "damian logo" },
@@ -942,7 +929,8 @@
             { name: "damian-4", src: "https://github.com/damintel/damintel.github.io/blob/main/Damintel-Logo.png?raw=true", w: 500, h: 380, caption: "damintel logo" },
             { name: "damian-5", src: "https://github.com/damintel/damintel.github.io/blob/main/Damintel-Me-Logo.png?raw=true", w: 500, h: 600, caption: "damintel square logo" },
             { name: "damian-6", src: "https://github.com/damintel/damintel.github.io/blob/main/dami-stu.png?raw=true", w: 500, h: 460, caption: "damian" },
-          ],
+            { name: "damian-6", src: "https://github.com/damintel/damintel.github.io/blob/main/IDEA-FORMATION-COVER.jpg?raw=true", w: 500, h: 460, caption: "idea formation" },
+             ],
         };
       },
       methods: {
@@ -995,6 +983,16 @@
         onScroll() {
           this.scrolled = window.scrollY > 8;
         },
+        downloadResume() {
+          const resumeUrl = "https://example.com/resume.pdf";
+
+          const link = document.createElement("a");
+          link.href = resumeUrl;
+          link.download = "resume.pdf";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
       },
       mounted() {
         window.addEventListener("hashchange", this.syncFromUrl);
