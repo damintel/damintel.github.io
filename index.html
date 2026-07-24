@@ -164,20 +164,27 @@
     .hero-backdrop {
       position: absolute;
       inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(0.5) blur(6px);
-      opacity: 0.35;
-      transform: scale(1.06);
+      background-image:
+        linear-gradient(rgba(201, 160, 99, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 160, 99, 0.16) 1px, transparent 1px);
+      background-size: 42px 42px;
+      -webkit-mask-image: radial-gradient(ellipse 90% 80% at 30% 20%, #000 0%, transparent 75%);
+      mask-image: radial-gradient(ellipse 90% 80% at 30% 20%, #000 0%, transparent 75%);
     }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(to bottom,
-          rgba(20, 31, 25, 0.55),
-          rgba(20, 31, 25, 0.92));
+          rgba(20, 31, 25, 0.15),
+          rgba(20, 31, 25, 0.88));
+    }
+
+    .ref-tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      color: var(--brass-dim);
     }
 
     .masonry {
@@ -225,6 +232,16 @@
           transparent);
     }
 
+    /* Visible keyboard focus across interactive elements */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .cursor-bar {
         animation: none;
@@ -240,7 +257,6 @@
         display: none;
     }
   </style>
-  <base target="_blank">
 </head>
 
 <body>
@@ -298,43 +314,40 @@
 
           <!-- ================= HOME ================= -->
           <section v-if="path==='home'" class="max-w-3xl mx-auto px-5 sm:px-8 pb-28">
-            <div class="relative rounded-2xl overflow-hidden mb-2">
-              <img src="https://picsum.photos/seed/damian-hero/1200/900" alt="" class="hero-backdrop" />
+            <div class="relative rounded-2xl overflow-hidden mb-2 border hairline">
+              <div class="hero-backdrop"></div>
               <div class="hero-overlay"></div>
 
               <div class="relative p-8 sm:p-12">
-                <div class="grid sm:grid-cols-[1fr_auto] gap-10 items-start">
-                  <div>
-                    <p class="field-label mb-5">
-                      software engineer / tech ethusiast
-                    </p>
-                    <h1 class="font-display font-medium text-4xl sm:text-6xl leading-[1.08] mb-8">
-                      I build systems<br />and Solutions that<br />make things
-                      work<span class="cursor-bar"></span>
-                    </h1>
-                    <p class="text-[var(--paper-dim)] text-lg leading-relaxed max-w-xl mb-8">
-                      Solutions architect, technical founder. Most of my time goes into building
-                      software and making the small infrastructure decisions
-                      that make a product feel dependable.
-                    </p>
-                  </div>
+                <div class="flex items-baseline justify-between mb-5">
+                  <p class="field-label">
+                    software engineer / solutions architect
+                  </p>
+                </div>
+                <h1 class="font-display font-medium text-4xl sm:text-6xl leading-[1.08] mb-8">
+                  I build systems<br />and solutions that<br />make things
+                  work<span class="cursor-bar"></span>
+                </h1>
+                <p class="text-[var(--paper-dim)] text-lg leading-relaxed max-w-xl mb-8">
+                  Technical founder. Most of my time goes into building
+                  software and making the small infrastructure decisions
+                  that make a product feel dependable.
+                </p>
+                <div class="flex flex-wrap gap-3 field-label">
+                  <button @click="SetView('projects')"
+                    class="inline-block font-mono text-sm bg-[var(--brass)] text-[var(--ink)] px-4 py-2 rounded-full hover:bg-[var(--paper)] transition-colors">
+                    see my work →
+                  </button>
+                  <button @click="SetView('contact')"
+                    class="border hairline rounded-full px-4 py-2 hover:border-[var(--brass)] transition-colors">
+                    book a service →
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3 mt-4 field-label">
-              <button @click="SetView('contact'); menuOpen = false"
-                class="inline-block font-mono text-sm bg-[var(--brass)] text-[var(--ink)] px-3 py-1 rounded-full hover:bg-[var(--paper)] transition-colors">
-                book a service
-              </button>
-              <button v-for="item in quickLinks" :key="item.key" @click="SetView(item.key)"
-                class="border hairline rounded-full px-4 py-2 hover:border-[var(--brass)] transition-colors">
-                {{ item.label }} →
-              </button>
-            </div>
-
-            <div class="mt-8">
-              <p class="field-label ml-2 mb-3">more...</p>
+            <div class="mt-10">
+              <p class="field-label ml-2 mb-3">explore</p>
               <div class="flex flex-wrap gap-2 field-label">
                 <button v-for="item in moreLinks" :key="item.key" @click="SetView(item.key)"
                   class="border hairline rounded-full px-4 py-2 sm:text-xs text-[var(--paper-dim)] hover:border-[var(--brass)] hover:text-[var(--paper)] transition-colors">
@@ -345,121 +358,151 @@
           </section>
 
           <!-- ================= ABOUT ================= -->
-          <section v-else-if="path==='about'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <section v-else-if="path==='about'" class="max-w-5xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-6">about me</p>
 
-            <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl mb-8">Hello, My Name is Damian Ugbah</p>
+            <div class="grid lg:grid-cols-[2fr_1fr] gap-12 items-start">
+              <div>
+                <p class="font-display text-2xl sm:text-3xl leading-snug mb-8">Hello, my name is Damian Ugbah</p>
 
-            <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl mb-8">
-              I'm a software developer passionate about building elegant,
-              scalable, and user-focused applications that transform ideas
-              into meaningful digital products.
-            </p>
+                <p class="font-display text-2xl sm:text-3xl leading-snug mb-10">
+                  I'm a software developer passionate about building elegant,
+                  scalable, and user-focused applications that transform ideas
+                  into meaningful digital products.
+                </p>
 
-            <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed max-w-2xl">
-              <p>
-                My journey into software development began with curiosity, a
-                desire to understand how technology works and how software can
-                solve real problems. What started as learning to write code
-                quickly evolved into a passion for designing systems, building
-                products, and creating experiences that people genuinely enjoy
-                using.
-              </p>
+                <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed">
+                  <p>
+                    My journey into software development began with curiosity, a
+                    desire to understand how technology works and how software can
+                    solve real problems. What started as learning to write code
+                    quickly evolved into a passion for designing systems, building
+                    products, and creating experiences that people genuinely enjoy
+                    using.
+                  </p>
 
-              <p>
-                My go to language/framework is Java and the Spring Boot
-                ecosystem, where I build secure, scalable, and maintainable
-                backend applications. On the frontend, I enjoy crafting clean
-                and intuitive interfaces using Vue.js, Tailwind CSS, HTML,
-                CSS, and JavaScript. I also work with MySQL, PostgreSQL, and
-                MongoDB, cloud storage solutions, authentication systems, REST
-                APIs, document generation, and deployment pipelines to deliver
-                complete end-to-end solutions.
-              </p>
+                  <p>
+                    My go to language/framework is Java and the Spring Boot
+                    ecosystem, where I build secure, scalable, and maintainable
+                    backend applications. On the frontend, I enjoy crafting clean
+                    and intuitive interfaces using Vue.js, Tailwind CSS, HTML,
+                    CSS, and JavaScript. I also work with MySQL, PostgreSQL, and
+                    MongoDB, cloud storage solutions, authentication systems, REST
+                    APIs, document generation, and deployment pipelines to deliver
+                    complete end-to-end solutions.
+                  </p>
+                </div>
 
-              <p>
-                One of the projects I'm most proud of is
-                <strong>KuratorPro</strong>, a SaaS platform that enables
-                users to create professional, ATS-friendly resumes through
-                dynamic templates. Building it has challenged me to think
-                beyond writing code. Requiring product thinking, system
-                architecture, database design, PDF generation, cloud
-                integration, payment systems, and user experience design.
-              </p>
+                <blockquote class="my-10 border-l-2 border-[var(--brass)] pl-6 py-1">
+                  <p class="font-display text-2xl sm:text-3xl leading-snug text-[var(--paper)]">
+                    Great software isn't just about functionality — it's about
+                    simplicity, maintainability, and solving problems in the
+                    best possible way.
+                  </p>
+                </blockquote>
 
-              <p>
-                I believe great software isn't just about functionality, it's
-                about simplicity, maintainability, and solving problems in the
-                best possible way. Whether I'm architecting a backend service,
-                designing a database, or refining a user interface, I strive
-                to write clean, thoughtful code that stands the test of time.
-              </p>
+                <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed">
+                  <p>
+                    One of the projects I'm most proud of is
+                    <strong>KuratorPro</strong>, a SaaS platform that enables
+                    users to create professional, ATS-friendly resumes through
+                    dynamic templates. Building it has challenged me to think
+                    beyond writing code — requiring product thinking, system
+                    architecture, database design, PDF generation, cloud
+                    integration, payment systems, and user experience design.
+                  </p>
 
-              <p>
-                Outside of building applications, I'm constantly learning. I
-                enjoy exploring software architecture, system design,
-                developer tools, and emerging technologies that help me become
-                a better engineer. Every project presents new challenges, and
-                I see each one as an opportunity to grow both technically and
-                creatively.
-              </p>
+                  <p>
+                    Whether I'm architecting a backend service, designing a
+                    database, or refining a user interface, I strive to write
+                    clean, thoughtful code that stands the test of time. Outside
+                    of building applications, I'm constantly exploring software
+                    architecture, system design, developer tools, and emerging
+                    technologies that help me become a better engineer. Every
+                    project is a chance to grow, both technically and creatively.
+                  </p>
 
-              <p>
-                I'm still on this journey, continuously learning, improving,
-                and building. My goal is simple: create software that makes a
-                real impact while growing into the kind of engineer who can
-                solve complex problems with elegant, practical solutions.
-              </p>
+                  <p>
+                    I'm still on this journey — continuously learning, improving,
+                    and building. My goal is simple: create software that makes a
+                    real impact, while growing into the kind of engineer who can
+                    solve complex problems with elegant, practical solutions.
+                  </p>
+                </div>
+              </div>
+
+              <aside class="entry-card rounded-lg p-6 lg:sticky lg:top-32">
+                <dl class="space-y-4 text-sm">
+                  <div>
+                    <dt class="ref-tag mb-1">focus</dt>
+                    <dd class="text-[var(--paper)]">Full-stack engineering, solutions architecture</dd>
+                  </div>
+                  <div>
+                    <dt class="ref-tag mb-1">core stack</dt>
+                    <dd class="text-[var(--paper)]">Java · Spring Boot · Vue.js · MongoDB</dd>
+                  </div>
+                  <div>
+                    <dt class="ref-tag mb-1">currently building</dt>
+                    <dd class="text-[var(--paper)]">KuratorPro</dd>
+                  </div>
+                </dl>
+                <button @click="SetView('contact')"
+                  class="mt-6 w-full inline-block font-mono text-xs bg-[var(--brass)] text-[var(--ink)] px-4 py-2.5 rounded-full hover:bg-[var(--paper)] transition-colors">
+                  work with me →
+                </button>
+              </aside>
             </div>
 
-            <p class="field-label mt-6 mb-6">about damintel</p>
+            <div class="mt-20 pt-16 border-t hairline max-w-2xl">
+              <p class="field-label mb-6">about damintel</p>
 
-            <p class="font-display text-2xl sm:text-3xl leading-snug max-w-2xl mb-8">
-              Hello, Welcome to Damintel.
-            </p>
-
-            <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed max-w-2xl">
-
-              <p>
-                <strong>Damintel</strong> is my personal brand and platform where I
-                explore the intersection of <strong>Technology</strong>,
-                <strong>Media</strong>, <strong>Business</strong>, and
-                <strong>Lifestyle</strong>. It's a space for sharing ideas,
-                experiences, and insights on how these industries shape one another and
-                influence the world around us.
+              <p class="font-display text-2xl sm:text-3xl leading-snug mb-8">
+                Hello, welcome to Damintel.
               </p>
 
-              <p>
-                The name <strong>Damintel</strong> is a combination of
-                <strong>Damian</strong> and <strong>Intelligence</strong>. Intelligence
-                here isn't about IQ, it's about information, knowledge, data, and
-                meaningful conversations that help us better understand an increasingly
-                connected world.
-              </p>
+              <div class="space-y-6 text-[var(--paper-dim)] leading-relaxed">
 
-              <p>
-                At Damintel, I believe no industry exists in isolation. Technology
-                drives business. Business influences media. Media shapes culture and
-                lifestyle. In turn, lifestyle creates new opportunities for innovation.
-                Every breakthrough, trend, or disruption creates a ripple effect across
-                the others, and that's exactly what makes these conversations so
-                interesting.
-              </p>
+                <p>
+                  <strong>Damintel</strong> is my personal brand and platform where I
+                  explore the intersection of <strong>Technology</strong>,
+                  <strong>Media</strong>, <strong>Business</strong>, and
+                  <strong>Lifestyle</strong>. It's a space for sharing ideas,
+                  experiences, and insights on how these industries shape one another and
+                  influence the world around us.
+                </p>
 
-              <p>
-                Whether we're discussing software development, artificial intelligence,
-                startups, digital products, content creation, entrepreneurship,
-                emerging technologies, or the future of work, the goal remains the
-                same: to connect the dots, simplify complex ideas, and explore how they
-                impact our everyday lives.
-              </p>
+                <p>
+                  The name <strong>Damintel</strong> is a combination of
+                  <strong>Damian</strong> and <strong>Intelligence</strong>. Intelligence
+                  here isn't about IQ, it's about information, knowledge, data, and
+                  meaningful conversations that help us better understand an increasingly
+                  connected world.
+                </p>
 
-              <p>
-                If you're curious about the future, passionate about technology, or
-                simply enjoy thoughtful conversations about where the world is heading,
-                welcome to Damintel. I'm glad you're here.
-              </p>
+                <p>
+                  At Damintel, I believe no industry exists in isolation. Technology
+                  drives business. Business influences media. Media shapes culture and
+                  lifestyle. In turn, lifestyle creates new opportunities for innovation.
+                  Every breakthrough, trend, or disruption creates a ripple effect across
+                  the others, and that's exactly what makes these conversations so
+                  interesting.
+                </p>
 
+                <p>
+                  Whether we're discussing software development, artificial intelligence,
+                  startups, digital products, content creation, entrepreneurship,
+                  emerging technologies, or the future of work, the goal remains the
+                  same: to connect the dots, simplify complex ideas, and explore how they
+                  impact our everyday lives.
+                </p>
+
+                <p>
+                  If you're curious about the future, passionate about technology, or
+                  simply enjoy thoughtful conversations about where the world is heading,
+                  welcome to Damintel. I'm glad you're here.
+                </p>
+
+              </div>
             </div>
 
           </section>
@@ -487,51 +530,60 @@
           </section>
 
           <!-- ================= PRODUCTS ================= -->
-          <section v-else-if="path==='products'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
-            <p class="field-label mb-6">saas — software as a service</p>
-            <h2 class="font-display text-3xl sm:text-4xl leading-snug mb-6 max-w-xl">
-              A few products, built and shipped end to end.
+          <section v-else-if="path==='products'" class="max-w-5xl mx-auto px-6 sm:px-8 pb-28">
+            <p class="field-label mb-6">products — live &amp; ready to use</p>
+            <h2 class="font-display text-3xl sm:text-4xl leading-snug mb-3 max-w-xl">
+              Things you can go use today.
             </h2>
+            <p class="text-[var(--paper-dim)] max-w-xl mb-10">
+              For the engineering deep-dives behind these, see
+              <button @click="SetView('projects')" class="link-underline text-[var(--paper)]">projects</button>.
+            </p>
 
-            <div class="space-y-6">
-              <div v-for="product in products" :key="product.title" class="entry-card rounded-lg p-7">
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div v-for="product in products" :key="product.title" class="entry-card rounded-lg p-7 flex flex-col">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
                   <h3 class="font-display text-2xl">{{ product.title }}</h3>
+                  <span class="ref-tag">{{ product.status }}</span>
                 </div>
-                <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
+                <p class="text-[var(--paper-dim)] leading-relaxed mb-5 flex-1">
                   {{ product.desc }}
                 </p>
-                <a :href="product.url" class="link-underline text-[var(--paper)] font-mono text-sm" target="_blank"
+                <a :href="product.url" class="link-underline text-[var(--paper)] font-mono text-sm self-start" target="_blank"
                   rel="noopener noreferrer">
-                  <span class="tag px-2.5 py-1 rounded">view product</span>
+                  <span class="tag px-2.5 py-1 rounded">try {{ product.title }} →</span>
                 </a>
               </div>
             </div>
           </section>
 
           <!-- ================= PROJECTS ================= -->
-          <section v-else-if="path==='projects'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
-            <p class="field-label mb-10">selected projects</p>
-            <div class="space-y-6">
-              <div v-for="project in projects" :key="project.title" class="entry-card rounded-lg p-7">
+          <section v-else-if="path==='projects'" class="max-w-5xl mx-auto px-6 sm:px-8 pb-28">
+            <p class="field-label mb-3">selected projects</p>
+            <h2 class="font-display text-3xl sm:text-4xl leading-snug mb-10 max-w-xl">
+              Technical projects i have worked on.
+            </h2>
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div v-for="(project, i) in projects" :key="project.title" class="entry-card rounded-lg p-7 flex flex-col">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
                   <h3 class="font-display text-2xl">{{ project.title }}</h3>
-                  <a :href="project.url" class="field-label" target="_blank" rel="noopener noreferrer">view project</a>
+                  <span class="ref-tag">no. {{ String(i + 1).padStart(2, '0') }}</span>
                 </div>
-                <p class="text-[var(--paper-dim)] leading-relaxed mb-5">
+                <p class="text-[var(--paper-dim)] leading-relaxed mb-5 flex-1">
                   {{ project.desc }}
                 </p>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 mb-5">
                   <span v-for="tag in project.tags" :key="tag" class="tag px-2.5 py-1 rounded">{{ tag }}</span>
                 </div>
+                <a :href="project.url" class="link-underline text-[var(--paper)] font-mono text-sm self-start" target="_blank" rel="noopener noreferrer">view project →</a>
               </div>
             </div>
           </section>
 
           <!-- ================= EXPERIENCE ================= -->
-          <section v-else-if="path==='experience'" class="max-w-3xl mx-auto px-6 sm:px-8 pb-28">
+          <section v-else-if="path==='experience'" class="max-w-5xl mx-auto px-6 sm:px-8 pb-28">
             <p class="field-label mb-10">work experience</p>
-            <div class="space-y-6">
+            <div class="grid sm:grid-cols-2 gap-6">
               <div v-for="exp in experiences" :key="exp.title" class="entry-card rounded-lg p-7">
                 <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
                   <h3 class="font-display text-xl">{{ exp.title }}</h3>
@@ -625,7 +677,8 @@
                     <span v-if="post.date" class="field-label">{{ post.date }}</span>
                   </div>
                   <p v-if="post.description" class="text-[var(--paper-dim)] text-sm leading-relaxed mb-4">
-                    {{ post.description }}...<span class="text-[var(--brass)] hover:underline cursor-pointer">Read more</span>
+                    {{ post.description.replace(/[.!?…]+$/, '') }}…
+                    <span class="text-[var(--brass)] link-underline cursor-pointer ml-1">Read more</span>
                   </p>
                   <div v-if="post.tags && post.tags.length" class="flex flex-wrap gap-2">
                     <span v-for="tag in post.tags" :key="tag" class="tag px-2.5 py-1 rounded">{{ tag }}</span>
@@ -712,35 +765,39 @@
             </div>
 
             <div class="mt-16">
-              <h4 class="font-display text-2xl mb-6">Send me a message</h4>
+              <h4 class="font-display text-2xl mb-2">Send me a message</h4>
+              <!-- <p class="text-[var(--paper-dim)] text-sm mb-6">
+                This opens a pre-filled message in your email app. Prefer to write directly?
+                Email <a href="mailto:ugbahdamian@kuratorpro.com" class="link-underline text-[var(--paper)]">ugbahdamian@kuratorpro.com</a>.
+              </p> -->
 
-              <form action="mailto:ugbahdamian@kuratorpro.com" method="post" enctype="text/plain" class="space-y-8">
+              <form @submit.prevent="sendMessage" class="space-y-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Name</label>
-                    <input type="text" name="name"
-                      class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors"
+                    <label for="cf-name" class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Name</label>
+                    <input id="cf-name" type="text" v-model="contactForm.name"
+                      class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--brass)] transition-colors"
                       placeholder="Enter your name" required>
                   </div>
                   <div>
-                    <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Email</label>
-                    <input type="email" name="email"
-                      class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors"
+                    <label for="cf-email" class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Your Email</label>
+                    <input id="cf-email" type="email" v-model="contactForm.email"
+                      class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--brass)] transition-colors"
                       placeholder="Enter email address" required>
                   </div>
                 </div>
 
                 <div>
-                  <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Subject</label>
-                  <input type="text" name="subject"
-                    class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors"
+                  <label for="cf-subject" class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Subject</label>
+                  <input id="cf-subject" type="text" v-model="contactForm.subject"
+                    class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--brass)] transition-colors"
                     placeholder="Project collaboration / Technical question" required>
                 </div>
 
                 <div>
-                  <label class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Message</label>
-                  <textarea name="body" rows="8"
-                    class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--paper)] transition-colors resize-y min-h-[180px]"
+                  <label for="cf-body" class="block font-mono text-sm mb-2 text-[var(--paper-dim)]">Message</label>
+                  <textarea id="cf-body" rows="8" v-model="contactForm.body"
+                    class="w-full bg-transparent border border-[var(--paper-dim)] px-4 py-3 text-[var(--paper)] font-mono focus:outline-none focus:border-[var(--brass)] transition-colors resize-y min-h-[180px]"
                     placeholder="Hi, I'd love to discuss..." required></textarea>
                 </div>
 
@@ -783,9 +840,9 @@
       experience: { title: "Experience" },
       tools: { title: "Tools" },
       books: { title: "Books" },
-      gallery: { title: "Gallery" },
       blog: { title: "Blog" },
       post: { title: "Post" },
+      gallery: { title: "Gallery" },
       contact: { title: "Contact" },
     };
 
@@ -800,6 +857,7 @@
           _progressTimer: null,
           currentPost: {},
           year: new Date().getFullYear(),
+          contactForm: { name: "", email: "", subject: "", body: "" },
 
           navItems: [
             { key: "home", label: "home" },
@@ -810,16 +868,11 @@
             { key: "books", label: "books" },
             { key: "contact", label: "contact" },
           ],
-          quickLinks: [
-            { key: "daas", label: "services" },
-            { key: "projects", label: "projects" },
-            { key: "experience", label: "experience" }
-          ],
           moreLinks: [
             { key: "tools", label: "tools" },
-            { key: "gallery", label: "gallery" },
-            { key: "blog", label: "blog" },
             { key: "products", label: "products" },
+            { key: "blog", label: "blog" },
+            { key: "gallery", label: "gallery" }
           ],
           services: [
             {
@@ -855,12 +908,14 @@
             {
               title: "KuratorPro",
               url: "https://kuratorpro.com",
-              desc: "An AI-assisted CV, cover letter, and portfolio builder — the core product behind the agency."
+              status: "live",
+              desc: "Build a professional, ATS-friendly CV, cover letter, and portfolio in minutes — pick a template, fill in your experience, export a polished document."
             },
             {
               title: "MemeDash",
               url: "https://memedash.com",
-              desc: "A community meme platform with uploads, moderation, and paid media."
+              status: "live",
+              desc: "Browse, upload, and share memes in a community built for it — with paid drops for creators who want to monetize their best content."
             }
           ],
           projects: [
@@ -927,64 +982,6 @@
               linkHref: "https://selar.com/61511x1955"
             },
           ],
-          blogPosts: [
-            // {
-            //   title: "",
-            //   coverimage: "",
-            //   description: "",
-            //   content: "",
-            //   date: "",
-            //   tags: [""]
-            // }
-            {
-              "title": "The Rise of Autonomous Agents: How AI Automation is Reshaping the Digital Landscape",
-              "coverimage": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop",
-              "description": "Exploring the evolution from rule-based bots to self-improving AI agents, and what this means for developers, businesses, and the future of work.",
-              "content": "<h2>The Paradigm Shift: From Automation to Autonomy</h2><p>For years, 'automation' meant writing scripts that followed a rigid set of rules. If X happened, do Y. While effective for repetitive tasks, this approach was brittle and required constant human maintenance. Today, we are witnessing the dawn of <strong>Autonomous Agents</strong> AI systems that can understand complex goals, break them down into sub-tasks, execute actions, and learn from the outcomes with minimal human intervention.</p><p>This isn't just a marginal improvement; it's a fundamental shift in how we interact with software. It transforms computers from being tools we wield to being partners we delegate to.</p><h2>Key Components of Modern AI Automation</h2><p>To understand the impact, we must break down the architecture that powers modern AI automation. It's more than just a single Large Language Model (LLM).</p><ul><li><p><strong>Orchestration Layers:</strong> This is the 'brain' that uses techniques like ReAct (Reasoning + Acting) to plan workflows. It connects an LLM's reasoning power to external tools.</p></li><li><p><strong>Tool Integration (Function Calling):</strong> Agents don't just talk; they act. They interface with APIs, databases, and web browsers to retrieve information, send emails, update spreadsheets, or even deploy code.</p></li><li><p><strong>Memory and State Management:</strong> Unlike a simple chat prompt, autonomous agents maintain both short-term working memory (for the current task) and long-term vector databases (to recall past interactions and learn preferences).</p></li><li><p><strong>Reflection and Self-Correction:</strong> Perhaps the most critical feature. High-level agents can critique their own outputs, test their assumptions, and retry failed operations without being prompted.</p></li></ul><h2>Real-World Applications in Tech</h2><p>AI automation is rapidly moving beyond novelty. In my experience working with early adopters, these are the three most transformative use-cases currently in production:</p><ul><li><p><strong>Automated Code Review and Testing:</strong> Agents are now running alongside CI/CD pipelines. They don't just test code; they write unit tests, identify potential security vulnerabilities (CVEs), and even suggest refactoring improvements, reducing the burden on senior engineers during code reviews.</p></li><li><p><strong>Dynamic Incident Response:</strong> In DevOps, when a server goes down or latency spikes, an AI agent can independently query logs, trace the root cause, and execute rollback scripts or scale up resources, all before a human engineer opens their laptop.</p></li><li><p><strong>Personalized Onboarding:</strong> Tech platforms are using agents to analyze new users' behavior in real-time, automatically generate personalized documentation, and schedule training modules based on the user's specific role and skill level.</p></li></ul><h2>The Developer's Dilemma: Trust vs. Control</h2><p>As these systems become more powerful, we face a crucial bottleneck: <em>trust</em>. Granting an AI agent write access to a production database or the ability to deploy code requires a high degree of confidence.</p><p>We are currently in the 'Human-in-the-Loop' phase, where agents propose actions and humans approve them. However, as latency becomes a competitive advantage, we are moving toward 'Human-on-the-Loop' where the agent acts first but alerts a human only when it encounters uncertainty or high risk. The future lies in building 'Guardrails' rather than 'Fences'. We need to define the boundaries of acceptable behavior tightly, rather than dictating every step.</p><h2>Actionable Takeaways for Engineering Teams</h2><p>If you are looking to integrate AI automation into your stack, here is a practical roadmap:</p><ol><li><p><strong>Start with Observability:</strong> You cannot automate what you cannot measure. Ensure your logs, metrics, and traces are structured and accessible before adding an AI layer.</p></li><li><p><strong>Focus on 'Low-Risk, High-Frequency' Tasks First:</strong> Automate the tedious stuff like data extraction and summarization before tackling critical infrastructure changes. This builds confidence and data sets for refinement.</p></li><li><p><strong>Embrace Prompt Engineering as a Core Skill:</strong> Just as we learned to write SQL, modern teams need to learn how to craft effective prompts, chain them together, and use few-shot examples to guide agent behavior.</p></li></ol><hr /><p><em>The era of AI automation isn't about replacing engineers; it's about augmenting our capabilities. By offloading the cognitive load of mundane tasks, we free ourselves to focus on the truly hard problems: architecture, design, and understanding the user. The race is on, not to build the smartest AI, but to build the most reliable infrastructure to deploy it safely.</em></p>",
-              "date": "2026-07-24",
-              "tags": ["AI Automation", "DevOps", "Generative AI", "Tech Trends", "LLMs"]
-            },
-            {
-              "title": "Prompt Engineering Is Dead: Long Live Prompt Engineering",
-              "coverimage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop",
-              "description": "The discipline of crafting perfect prompts is evolving from an art into a science, driven by new frameworks, automation, and reinforcement learning techniques.",
-              "content": "<h2>The Hype Cycle's Favorite Child</h2><p>In 2024, Prompt Engineering was the hottest job title in tech. By 2025, pundits were declaring it dead, arguing that better models would make prompt crafting obsolete. In 2026, we're seeing the truth: Prompt Engineering isn't dying. It's growing up.</p><p>The discipline is maturing from a handful of clever hacks into a rigorous engineering practice, complete with evaluation frameworks, version control, and automated optimization pipelines. The wild west days are over, but the fundamentals remain critical.</p><h2>What Changed</h2><p>To understand where prompt engineering is going, you need to understand the shifts that have occurred in the last 18 months.</p><ul><li><p><strong>Models Got Bigger and Smarter:</strong> GPT-4 and Claude 3.5 Sonnet and their successors handle ambiguity better than previous generations. They can infer intent without exhaustive instructions. This has shifted prompt engineering from 'teaching the model' to 'guiding the model.'</p></li><li><p><strong>Context Windows Expanded:</strong> With 128K, 200K, even 1M+ token context lengths, techniques like RAG (Retrieval-Augmented Generation) have become more sophisticated. The bottleneck is no longer fitting data into the prompt; it's finding the right data to include.</p></li><li><p><strong>Structured Outputs Became Standard:</strong> Models now reliably produce JSON, XML, and tool calls. The era of parsing unstructured text is ending. This means prompt engineering is more about controlling outputs than coaxing them.</p></li></ul><h2>The New Prompt Engineering Stack</h2><p>Modern prompt engineering looks less like a writer's workshop and more like a software engineering discipline.</p><ul><li><p><strong>Evaluation Frameworks:</strong> Teams are building test suites for their prompts. Just as you wouldn't deploy code without unit tests, you shouldn't deploy prompts without evaluation against a curated dataset of edge cases.</p></li><li><p><strong>Version Control for Prompts:</strong> Prompt changes are tracked in GitHub alongside code. Teams maintain a registry of prompt versions tied to specific model versions and release them through CI/CD pipelines.</p></li><li><p><strong>Automated Optimization:</strong> Tools like DSPy and PromptWatch allow engineers to define prompts declaratively and have the system automatically optimize them based on performance metrics, finding parameters that beat hand-crafted prompts.</p></li></ul><h2>From Prompting to Agentic Workflows</h2><p>The most significant evolution is the shift from single-prompt interactions to multi-step workflows.</p><ul><li><p><strong>Chain of Thought Is Standard:</strong> The breakthrough insight of 2023 is now table stakes. Modern systems automatically generate reasoning steps before generating answers.</p></li><li><p><strong>Multi-Agent Collaboration:</strong> Instead of one prompt to do everything, workflows now involve specialized agents working together: a planning agent, a research agent, a writing agent, a review agent. The prompt engineering challenge becomes orchestrating these interactions.</p></li><li><p><strong>Self-Correction Loops:</strong> The most advanced systems include reflection stages where the output is evaluated, and if it doesn't meet criteria, the workflow loops back with new instructions based on the evaluation.</p></li></ul><h2>Core Skills That Still Matter</h2><p>Despite all this automation, fundamental skills remain essential for effective prompt engineering.</p><ul><li><p><strong>Taxonomy Design:</strong> Understanding how to categorize and structure information so that retrieval finds the right context.</p></li><li><p><strong>Few-Shot Example Selection:</strong> Choosing the right examples to demonstrate behavior, not just any examples. The quality of demonstrations matters more than quantity.</p></li><li><p><strong>Constraint Specification:</strong> Clearly articulating what the model should not do is often more important than specifying what it should do.</p></li></ul><h2>Actionable Takeaways</h2><p>If you want to build robust, production-ready AI systems in 2026, here's your roadmap:</p><ol><li><p><strong>Build an evaluation dataset first:</strong> Before writing a single prompt, collect at least 100 examples of input-output pairs that represent the full range of scenarios your system will handle.</p></li><li><p><strong>Test across multiple models:</strong> Don't build against one model version. Test your prompts against GPT-4, Claude, Gemini, and open-source alternatives to ensure robustness.</p></li><li><p><strong>Monitor in production:</strong> Prompt performance degrades over time as models change and data shifts. Build drift detection into your monitoring stack.</p></li><li><p><strong>Embrace automation:</strong> Let tools optimize your prompts for you. Your unique value isn't in crafting perfect wording; it's in understanding the domain and designing the overall workflow.</p></li></ol><hr /><p><em>The title 'Prompt Engineer' might fade, but the underlying skills of designing effective AI interactions will become a core competency for every software engineer, much like writing SQL or using version control. The discipline isn't dying. It's becoming invisible because it's becoming essential.</em></p>",
-              "date": "2026-07-24",
-              "tags": ["Prompt Engineering", "Generative AI", "LLMs", "AI Development", "Machine Learning"]
-            },
-            {
-              "title": "Java and Spring Boot in 2026: Why the 'Legacy' Stack Is More Relevant Than Ever",
-              "coverimage": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop",
-              "description": "Despite predictions of its demise, Java remains the backbone of enterprise development. Here's how Spring Boot has evolved to meet the demands of modern cloud-native architecture.",
-              "content": "<h2>The Resurrection Narrative</h2><p>Every few years, a new technology emerges that supposedly makes Java obsolete. Node.js was going to do it. Then Go. Then Rust. Yet here we are in 2026, and Java is not just surviving; it's thriving. According to the latest Stack Overflow Developer Survey, Java remains in the top five most-used languages, with over 30% of professional developers actively using it.</p><p>What's driving this resilience? The answer lies in Spring Boot's remarkable evolution. The framework that once defined enterprise Java has transformed into a cloud-native powerhouse that rivals any modern stack in developer experience and performance.</p><h2>What's New in Spring Boot 3.x</h2><p>If your perception of Spring Boot is stuck in the XML configuration days, you're missing out on a revolution. The latest iterations of Spring Boot have embraced modern paradigms while maintaining the stability that enterprises require.</p><ul><li><p><strong>Native Compilation with GraalVM:</strong> Spring Boot 3.x introduced first-class support for GraalVM native images. This means your Spring Boot applications can now compile to native executables with startup times measured in milliseconds and memory footprints reduced by up to 90%. For serverless and containerized workloads, this is a game-changer.</p></li><li><p><strong>Observability Built-In:</strong> The Micrometer and Micrometer Tracing integrations are now standard. You get distributed tracing, metrics, and structured logging out of the box, with automatic integration into Prometheus, Zipkin, and OpenTelemetry.</p></li><li><p><strong>AOT (Ahead-of-Time) Compilation:</strong> Spring Boot now supports AOT processing that resolves configuration at build time rather than runtime. This reduces startup time and eliminates the runtime overhead of reflection and proxy generation.</p></li></ul><h2>Spring Boot's Modern Architecture</h2><p>Beyond new features, the fundamental architecture of Spring Boot has evolved to align with modern development practices.</p><ul><li><p><strong>Reactive Programming:</strong> Spring WebFlux provides a fully non-blocking reactive stack built on Project Reactor. For applications with high concurrency requirements, this enables thousands of concurrent connections with minimal threads.</p></li><li><p><strong>Modular Design:</strong> Spring Boot's auto-configuration is now more granular. You can bring in only what you need, significantly reducing the size of your application and the risk of dependency conflicts.</p></li><li><p><strong>Improved Testing Support:</strong> The testing module has been overhauled with better @TestConfiguration support, improved Mockito integration, and faster test execution through smarter context caching.</p></li></ul><h2>Why Enterprises Still Choose Java</h2><p>While new languages capture mindshare, enterprises continue to bet on Java for critical systems. Here's why.</p><ul><li><p><strong>Vast Ecosystem:</strong> There's a mature, battle-tested library for virtually everything. Want to integrate with Salesforce? There's a Spring module. Need to process financial transactions? There's a proven solution. This ecosystem maturity reduces risk and accelerates development.</p></li><li><p><strong>Exceptional Backward Compatibility:</strong> Code written for Java 8 continues to run unchanged on Java 21. This might seem boring, but for enterprises with millions of lines of code, this stability is invaluable.</p></li><li><p><strong>Tooling and Debugging:</strong> IntelliJ IDEA, Eclipse, and VS Code have deep Java support. Profiling tools like JProfiler and YourKit are mature. Debugging production issues in Java is well-understood and well-supported.</p></li><li><p><strong>Top-Tier Performance:</strong> The JVM's JIT (Just-In-Time) compiler delivers performance that rivals, and often exceeds, compiled languages for long-running processes. The arrival of Project Loom (virtual threads) has eliminated the thread-per-request scalability bottleneck.</p></li></ul><h2>Spring Boot vs. Alternatives: A Realistic Comparison</h2><p>It's fashionable to compare Spring Boot with Node.js, Go, or Rust. These comparisons often miss the nuance of real-world decisions.</p><ul><li><p><strong>Spring Boot vs. Node.js:</strong> Node.js has a faster startup time and lower memory footprint. Spring Boot has better type safety, better performance under load, and a more mature ecosystem for enterprise integrations. The choice often comes down to team expertise and application complexity.</p></li><li><p><strong>Spring Boot vs. Go:</strong> Go offers simpler concurrency and faster compilation. Spring Boot offers a richer ecosystem and more expressive abstractions. For microservices that primarily do CRUD operations, Go is compelling. For complex business logic with extensive integrations, Spring Boot has the advantage.</p></li><li><p><strong>Spring Boot vs. Rust:</strong> Rust offers memory safety and extreme performance. Spring Boot offers developer productivity and a gentler learning curve. Very few business applications need the level of control Rust provides, and fewer teams can afford the onboarding cost.</p></li></ul><h2>Common Pitfalls and How to Avoid Them</h2><p>Even with all these improvements, Spring Boot development can go wrong. Here are the mistakes I see most frequently.</p><ul><li><p><strong>Overusing @Autowired:</strong> Constructor injection is cleaner, more testable, and makes dependencies explicit. Avoid field injection for anything beyond quick prototypes.</p></li><li><p><strong>Ignoring the Starter Dependency:</strong> Spring Boot starters are curated to avoid version conflicts. Don't micromanage dependencies; trust the starters unless you have specific reasons not to.</p></li><li><p><strong>Treating the Default Configuration as Production-Ready:</strong> Default thread pools, connection pools, and heap sizes are designed for development, not production. Always tune these values based on your workload.</p></li><li><p><strong>Neglecting the Database Layer:</strong> Spring Data JPA is powerful but can generate suboptimal queries. Always validate the generated SQL and use native queries or jOOQ for complex reporting.</p></li></ul><h2>Actionable Recommendations for Teams</h2><p>If you're starting a new Spring Boot project or modernizing an existing one, here's what I recommend:</p><ol><li><p><strong>Target the Latest LTS:</strong> Use Java 21 LTS and Spring Boot 3.2+. The virtual threads and native compilation features are worth the upgrade.</p></li><li><p><strong>Enable Observability Early:</strong> Integrate Micrometer and OpenTelemetry from day one. Production troubleshooting is miserable without observability, and retrofitting it is painful.</p></li><li><p><strong>Structure by Domain, Not by Layer:</strong> Organize your code around business capabilities rather than technical layers (controllers, services, repositories). This improves maintainability and alignment with business needs.</p></li><li><p><strong>Invest in Testing:</strong> Spring Boot's testing support is exceptional. Write @WebMvcTest and @DataJpaTest slices to keep tests fast and focused. Aim for >80% coverage on business logic.</p></li><li><p><strong>Treat Configuration as Code:</strong> Use Spring Cloud Config or Kubernetes ConfigMaps to externalize configuration. Avoid environment-specific properties files that differ across deployments.</p></li></ol><hr /><p><em>Java and Spring Boot have earned their place in the enterprise ecosystem through decades of evolution and refinement. The platform that powered early e-commerce sites is now powering modern cloud-native systems at massive scale. The 'legacy' label misses the point entirely. This isn't a legacy technology; it's a mature technology that continues to adapt and thrive in a rapidly changing landscape.</em></p>",
-              "date": "2026-07-24",
-              "tags": ["Java", "Spring Boot", "Enterprise Development", "JVM", "Cloud Native"]
-            },
-            {
-              "title": "Mastering Spring Boot Performance: From Development to Production",
-              "coverimage": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop",
-              "description": "A practical guide to optimizing Spring Boot applications for startup time, throughput, and resource efficiency in cloud-native environments.",
-              "content": "<h2>The Performance Paradox</h2><p>Spring Boot has a reputation problem. Many developers believe it's heavy and slow, suitable only for legacy enterprise monoliths. This reputation is both outdated and undeserved. Modern Spring Boot, properly configured, can compete with any framework on performance.</p><p>The issue isn't the framework; it's the default configurations, which prioritize ease of development over production performance. With the right approach, Spring Boot applications can achieve remarkable performance metrics. I've seen startup times drop from 30 seconds to under 200 milliseconds through the techniques I'm about to share.</p><h2>Startup Time Optimization</h2><p>In the world of serverless and container orchestration, startup time directly impacts cost and user experience. Slow startups mean slower scale-up events and higher infrastructure bills.</p><ul><li><p><strong>Spring Boot 3.x with GraalVM Native Images:</strong> This is the single most impactful optimization. Native images startup in 50-200ms compared to 2-8 seconds for traditional JVM startup. The trade-off is a more complex build process and larger build times.</p></li><li><p><strong>Conditional Configuration Audit:</strong> Spring Boot's auto-configuration runs many checks on startup to determine which beans to create. Use the --debug flag to see what's being autoconfigured and then exclude unnecessary configurations using spring.autoconfigure.exclude in your application.properties.</p></li><li><p><strong>Lazy Initialization:</strong> Set spring.main.lazy-initialization=true to create beans on first use rather than at startup. This dramatically reduces startup time but can mask dependency cycles and shift performance issues to request time.</p></li></ul><h2>Runtime Performance Tuning</h2><p>Once your application is running, here's how to get the best throughput and lowest latency.</p><ul><li><p><strong>Virtual Threads (Project Loom):</strong> With Java 21+, enable virtual threads by setting spring.threads.virtual.enabled=true. This allows you to handle thousands of concurrent requests without thread pool exhaustion. It's particularly impactful for IO-bound workloads like database calls and external API integrations.</p></li><li><p><strong>Connection Pool Management:</strong> The default HikariCP configuration uses a pool of 10 connections. This is often insufficient for moderate traffic. Monitor your database connection usage and adjust maximumPoolSize accordingly. A good starting point is 20-30 connections per database instance.</p></li><li><p><strong>JVM Heap Sizing:</strong> The default heap size is often too small or too large. For containerized environments, set -XX:MaxRAMPercentage=70.0 to use 70% of the container's memory limit, leaving room for the OS and native threads. Use -XX:+UseContainerSupport (default in Java 8u191+) to automatically respect container limits.</p></li></ul><h2>Database Performance</h2><p>Database interactions are typically the biggest performance bottleneck in Spring Boot applications.</p><ul><li><p><strong>N+1 Query Problem:</strong> This is the most common performance anti-pattern in JPA applications. Use @EntityGraph or fetch joins to load relationships eagerly when needed. Enable SQL logging with spring.jpa.show-sql=true during development to catch N+1 issues early.</p></li><li><p><strong>Second-Level Cache:</strong> For read-heavy workloads, enable Hibernate's second-level cache with a distributed cache like Redis or Hazelcast. This reduces database round trips dramatically.</p></li><li><p><strong>Connection Management:</strong> Ensure that every database operation is wrapped in a transaction boundary. Use @Transactional appropriately and understand that nested methods with separate transaction propagations can create connection lease bottlenecks.</p></li></ul><h2>Memory Management</h2><p>Memory leaks and high memory usage are subtle killers of performance.</p><ul><li><p><strong>Avoid Large Sessions:</strong> Spring Session with in-memory storage can grow unpredictably. If using session-based authentication, consider switching to JWT-based stateless authentication or use Redis-backed session storage.</p></li><li><p><strong>Cache Size Control:</strong> Spring's caching abstraction with caffeine or Ehcache is excellent but needs size limits. An unbounded cache will eventually cause an OutOfMemoryError.</p></li><li><p><strong>Watch for String Concatenation in Loops:</strong> Use StringBuilder instead of String concatenation inside loops. This seems basic, but I still see this mistake in production code.</p></li></ul><h2>Observability for Performance</h2><p>You can't optimize what you can't measure. These tools will give you the data you need.</p><ul><li><p><strong>Micrometer Metrics:</strong> Use Micrometer to capture request rates, latencies, error rates, and custom business metrics. Send these to Prometheus and build dashboards to track trends.</p></li><li><p><strong>Distributed Tracing:</strong> Integrate Micrometer Tracing (formerly Sleuth) with Zipkin or Jaeger. Understanding request flow across services is essential for identifying bottlenecks.</p></li><li><p><strong>JVM Monitoring:</strong> Use Micrometer's JVM metrics to track GC pauses, heap usage, and thread counts. Long GC pauses are often the root cause of latency spikes.</p></li></ul><h2>Actionable Performance Checklist</h2><p>Here's a practical checklist to work through when optimizing your Spring Boot application:</p><ol><li><p><strong>Enable virtual threads</strong> for IO-bound workloads</p></li><li><p><strong>Tune the connection pool</strong> to match your workload patterns</p></li><li><p><strong>Add cache headers</strong> for static resources and asset serving</p></li><li><p><strong>Use DTOs</strong> instead of returning entire entities from controllers</p></li><li><p><strong>Enable GZIP compression</strong> on HTTP responses</p></li><li><p><strong>Configure keep-alive</strong> on your web server (Tomcat/Undertow)</p></li><li><p><strong>Set appropriate timeouts</strong> on external API calls (connect, read, write)</p></li><li><p><strong>Profile in production</strong> using async-profiler or JFR (Java Flight Recorder)</p></li></ol><hr /><p><em>Spring Boot's performance in production is a function of your configuration decisions, not just the framework's capabilities. The tools are there; it's up to you to use them. Start with the basics: virtual threads, proper heap sizing, and connection pool tuning. Then iterate based on real production metrics. The performance improvements are often dramatic and almost always worth the effort.</em></p>",
-              "date": "2026-07-24",
-              "tags": ["Spring Boot", "Java Performance", "JVM Tuning", "Database", "Observability"]
-            },
-            {
-              "title": "Spring Security in 2026: Beyond Passwords and Into Zero-Trust Architecture",
-              "coverimage": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop",
-              "description": "Modern Spring Security goes far beyond authentication. Learn how to implement Zero-Trust security patterns, OAuth2, and fine-grained authorization in your Spring Boot applications.",
-              "content": "<h2>Security Has Changed</h2><p>Remember when Spring Security meant a single login page and a hashed password in a database? Those days are long gone. Modern applications face sophisticated threats: credential stuffing, session hijacking, supply chain attacks, and insider threats. The security posture required today is fundamentally different.</p><p>Spring Security has evolved alongside these threats. It now provides comprehensive support for Zero-Trust architectures, including mutual TLS, OAuth2 authorization servers, and fine-grained attribute-based access control. Understanding these features is no longer optional for production applications.</p><h2>Zero-Trust Fundamentals in Spring</h2><p>The Zero-Trust model operates on a simple premise: never trust, always verify. Here's how that translates to Spring Security.</p><ul><li><p><strong>Every Request Is Authenticated:</strong> Even internal service-to-service requests require authentication. There's no network perimeter to trust. Spring Security's @PreAuthorize annotations on service methods ensure authorization checks happen at the application layer.</p></li><li><p><strong>Short-Lived Credentials:</strong> Use JWT with short expiration times (15-30 minutes) combined with refresh tokens. The Spring Security OAuth2 Resource Server integration handles JWT validation automatically.</p></li><li><p><strong>Continuous Authorization:</strong> Don't assume that because a user authenticated at the start of a session, they still have the same permissions. Spring Security's AccessDecisionManager can implement real-time permission checks against external policy engines.</p></li></ul><h2>OAuth2 and OpenID Connect: The New Standard</h2><p>Password-based authentication is increasingly seen as insecure. OAuth2 and OpenID Connect are now the standard for modern applications.</p><ul><li><p><strong>Spring Authorization Server:</strong> The replacement for the deprecated Spring Security OAuth project. It provides a complete OAuth2 authorization server implementation that's production-ready and configurable.</p></li><li><p><strong>Resource Server Pattern:</strong> Spring Security's @EnableResourceServer (now replaced with the OAuth2 Resource Server support) makes your Spring Boot application a secure resource server that validates incoming tokens.</p></li><li><p><strong>JWT Best Practices:</strong> Use asymmetric signing with RS256 to allow microservices to validate tokens without sharing secrets. Configure proper claim validation, including issuer, audience, and expiration checks.</p></li></ul><h2>Fine-Grained Authorization</h2><p>Role-based access control (RBAC) is no longer sufficient for complex applications. Attribute-based access control (ABAC) provides the flexibility modern systems need.</p><ul><li><p><strong>Method Security:</strong> Use @PreAuthorize with Spring Expression Language (SpEL) for expressive, method-level security. For example: @PreAuthorize('hasRole('ADMIN') or (hasRole('USER') and #userId == authentication.principal.id)')</p></li><li><p><strong>Hierarchical Roles:</strong> Spring Security's RoleVoter and RoleHierarchy allow for inheritance in roles (e.g., ADMIN inherits USER permissions). This simplifies permission management.</p></li><li><p><strong>Custom Permission Evaluators:</strong> Extend Spring Security with custom permission evaluators for complex domain-specific rules. For instance, 'canEditDocument' might check ownership, team membership, and document status.</p></li></ul><h2>Securing Against Modern Threats</h2><p>Spring Security provides built-in protections against common attack vectors, but you must enable and configure them properly.</p><ul><li><p><strong>CSRF Protection:</strong> CSRF is enabled by default for form-based authentication but should be disabled for stateless APIs using JWTs. Understand when and how to configure CSRF for your use case.</p></li><li><p><strong>CORS Configuration:</strong> Strict CORS settings prevent unauthorized domains from making requests. Use @CrossOrigin annotations or global CORS configuration to define allowed origins, methods, and headers.</p></li><li><p><strong>Security Headers:</strong> Spring Security's SecurityContextHolder sets standard security headers: X-Content-Type-Options, X-Frame-Options, and Content-Security-Policy. Review and customize these headers for your application's needs.</p></li></ul><h2>Identity Providers and Federation</h2><p>Modern applications rarely manage identities in isolation. Integration with identity providers is now standard.</p><ul><li><p><strong>Single Sign-On:</strong> Spring Security integrates with Okta, Auth0, Keycloak, and Azure AD through the OAuth2 Login module. Configuration typically involves a few properties for client ID, secret, and issuer URI.</p></li><li><p><strong>SAML Support:</strong> For enterprise applications that require SAML (still common in healthcare, finance, and government), Spring Security SAML provides robust integration.</p></li><li><p><strong>Social Login:</strong> OAuth2 Login supports Google, Facebook, GitHub, and other social providers out of the box. This is increasingly expected for consumer-facing applications.</p></li></ul><h2>Common Security Mistakes</h2><p>After auditing hundreds of Spring Boot applications, here are the mistakes I see most often.</p><ul><li><p><strong>Exposing Stack Traces:</strong> Never expose exception stack traces in production. Use @ControllerAdvice with structured error responses that don't reveal internal implementation details.</p></li><li><p><strong>Logging Sensitive Data:</strong> Enable logging of authentication events but never log passwords, tokens, or personal information. Use spring.security.user.password for development only.</p></li><li><p><strong>Weak Password Storage:</strong> Always use BCrypt, SCrypt, or Argon2 with a work factor of at least 12. Never use MD5, SHA-1, or plain text.</p></li><li><p><strong>Missing Rate Limiting:</strong> Without rate limiting, your application is vulnerable to brute force attacks. Implement rate limiting with Bucket4j or Resilience4j at the authentication endpoint.</p></li></ul><h2>Implementation Checklist</h2><p>Here's a practical checklist for securing a Spring Boot application in 2026:</p><ol><li><p><strong>Use OAuth2/OIDC</strong> for user authentication; avoid storing passwords locally</p></li><li><p><strong>Implement JWT</strong> with RS256 signing and short expiration times</p></li><li><p><strong>Enable method-level security</strong> with @PreAuthorize and custom permission evaluators</p></li><li><p><strong>Configure CORS</strong> with a strict allowed-origin list</p></li><li><p><strong>Set security headers</strong> including CSP, HSTS, and X-Frame-Options</p></li><li><p><strong>Implement rate limiting</strong> on authentication endpoints</p></li><li><p><strong>Enable audit logging</strong> for authentication and authorization events</p></li><li><p><strong>Run regular dependency scans</strong> with OWASP Dependency Check for known vulnerabilities</p></li></ol><hr /><p><em>Security is not a one-time implementation; it's an ongoing process. Spring Security provides the tools, but you must stay current with best practices, patch dependencies regularly, and audit your configurations. The threats evolve, and so must your defenses. A secure Spring Boot application starts with the framework but is maintained through vigilance and continuous improvement.</em></p>",
-              "date": "2026-07-24",
-              "tags": ["Spring Security", "Zero Trust", "OAuth2", "JWT", "Application Security"]
-            },
-            {
-              "title": "Spring Boot 4.0: The Modular Revolution and Your Migration Roadmap",
-              "coverimage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop",
-              "description": "Spring Boot 4.0 is here, bringing modular architecture, JSpecify null safety, and built-in API versioning. This guide covers what's new and a step-by-step migration strategy from Spring Boot 3.x.",
-              "content": "<div><h2>A New Generation of Spring Boot</h2><p>November 2025 marked a significant milestone in the Spring ecosystem. Spring Boot 4.0.0 was released, representing a new generation of the framework built on Spring Framework 7.0. This isn't just a routine version bump; it's a fundamental rethinking of how Spring Boot is structured, with a focus on modularity, developer productivity, and modern Java practices.</p><p>The release introduces smaller, more focused JARs, native support for API versioning, and JSpecify for compile-time null safety. Production upgrades are yielding tangible benefits: teams report image sizes reduced by 19% and startup times cut by 33% compared to Spring Boot 3.5.x.</p><h2>Major Features of Spring Boot 4.0</h2><p>Understanding the new features will help you appreciate why this migration is worthwhile.</p><ul><li><p><strong>Modular Architecture</strong>: The monolithic <code>spring-boot-autoconfigure</code> JAR has been split into 47 focused modules. The <code>spring-boot-starter-web</code> starter now loads only WebMVC configuration, excluding unrelated dependencies like batch or MongoDB.</p></li><li><p><strong>JSpecify Null Safety</strong>: Spring Boot 4.0 adopts JSpecify 1.0 annotations (<code>org.jspecify.annotations</code>) across the portfolio. This enables compile-time null safety, helping you catch potential <code>NullPointerException</code>s before they reach production.</p></li><li><p><strong>Native API Versioning</strong>: You can now version REST APIs using a <code>version</code> attribute on <code>@GetMapping</code> and similar annotations, supporting both header-based and path-based strategies.</p></li><li><p><strong>Declarative HTTP Clients</strong>: Built-in HTTP service clients eliminate the need for third-party libraries like Feign.</p></li></ul><h2>Migration Strategy: A Phased Approach</h2><p>A direct jump from Spring Boot 2.x to 4.x is not recommended. The safest path is a three-phase approach.</p><ul><li><p><strong>Phase 1: Stabilize on Spring Boot 3.5.x</strong>. First, upgrade to the latest <code>3.5.x</code> version. This surfaces deprecations in a safer context and reduces the delta when jumping to 4.0. The Spring Boot 2 to 3 upgrade required the <code>javax</code> to <code>jakarta</code> namespace change, which must be completed first.</p></li><li><p><strong>Phase 2: Validate Platform Baselines</strong>. Spring Boot 4.0 requires Java 17 or later, Kotlin 2.2 or later, Jakarta EE 11, and Servlet 6.1. If using GraalVM native images, version 25 or later is required.</p></li><li><p><strong>Phase 3: Upgrade to Spring Boot 4.0</strong>. Update your parent POM or Gradle plugin to <code>4.0.0</code> and work through the dependency and code changes detailed below.</p></li></ul><h2>Key Dependency and Code Changes</h2><p>Here are the most impactful breaking changes you'll encounter.</p><ul><li><p><strong>Starter Renames and New Starters</strong>: Many starters have been renamed to be more focused. <code>spring-boot-starter-web</code> becomes <code>spring-boot-starter-webmvc</code>, and <code>spring-boot-starter-aop</code> becomes <code>spring-boot-starter-aspectj</code>. OAuth2 starters now use a <code>security</code> prefix: <code>spring-boot-starter-security-oauth2-client</code>. For <code>Flyway</code> and <code>Liquibase</code>, you must now explicitly add <code>spring-boot-starter-flyway</code> or <code>spring-boot-starter-liquibase</code>.</p></li><li><p><strong>Test Starter Migration</strong>: <code>@MockBean</code> and <code>@SpyBean</code> are replaced by <code>@MockitoBean</code> and <code>@MockitoSpyBean</code> from Spring Test. Each technology now has a paired test starter (<code>spring-boot-starter-&lt;technology&gt;-test</code>), which brings <code>spring-boot-starter-test</code> transitively. For example, tests using <code>@WithMockUser</code> require <code>spring-boot-starter-security-test</code>.</p></li><li><p><strong>Undertow Dropped</strong>: Undertow support has been removed as it is not compatible with Servlet 6.1. Migrate to Tomcat or Jetty.</p></li><li><p><strong>Configuration Property Changes</strong>: Many properties have been renamed or moved. Spring Boot provides a <code>spring-boot-properties-migrator</code> module to help. Add it as a runtime dependency, run your application, review the migration report, and then remove it.</p></li></ul><h2>JSpecify Null Safety in Practice</h2><p>Adopting null safety is a core part of the Spring Boot 4 experience. Start by adding the JSpecify dependency:</p><pre><code>&lt;dependency&gt;\n    &lt;groupId&gt;org.jspecify&lt;/groupId&gt;\n    &lt;artifactId&gt;jspecify&lt;/artifactId&gt;\n    &lt;version&gt;1.0.0&lt;/version&gt;\n&lt;/dependency&gt;</code></pre><p>Create a <code>package-info.java</code> file to mark a package as default non-null:</p><pre><code>@NullMarked\npackage com.example.myapp;\n\nimport org.jspecify.annotations.NullMarked;</code></pre><p>Then handle <code>@Nullable</code> return values explicitly, such as using <code>orElseThrow()</code> when retrieving an <code>Optional</code> from a repository.</p><h2>Using OpenRewrite for Automated Migration</h2><p>Manual migration is error-prone. The OpenRewrite recipe <code>org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0</code> automates most of the work. The recipe handles starter renaming, test annotation migration, property updates, and framework version bumps.</p><p>Run it with the Maven command:</p><pre><code>mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \\\n  --define rewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE \\\n  --define rewrite.activeRecipes=org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0 \\\n  --define rewrite.exportDatatables=true</code></pre><p>Note that OpenRewrite takes a conservative approach with Jackson, adding a compatibility shim. A manual second pass is often needed to fully migrate to Jackson 3.</p><hr /><p><em>Spring Boot 4.0 represents a significant evolution of the framework, delivering on the promise of modularity and modern Java practices. While the migration requires careful planning, the performance gains, improved developer experience, and enhanced security make it a worthwhile investment for any team building on the Spring ecosystem. Start with the three-phase approach, leverage the OpenRewrite recipe, and test thoroughly at each step.</em></p></div>",
-              "date": "2026-07-24",
-              "tags": ["Spring Boot 4", "Java", "Migration", "JSpecify", "OpenRewrite"]
-            }
-          ],
           galleryPhotos: [
             { name: "damian-1", src: "https://github.com/damintel/damintel.github.io/blob/main/Dam-Me-Logo.png?raw=true", w: 500, h: 650, caption: "d-logo" },
             { name: "damian-2", src: "https://github.com/damintel/damintel.github.io/blob/main/Damian-Logo.png?raw=true", w: 500, h: 420, caption: "damian logo" },
@@ -993,7 +990,17 @@
             { name: "damian-5", src: "https://github.com/damintel/damintel.github.io/blob/main/Damintel-Me-Logo.png?raw=true", w: 500, h: 600, caption: "damintel square logo" },
             { name: "damian-6", src: "https://github.com/damintel/damintel.github.io/blob/main/dami-stu.png?raw=true", w: 500, h: 460, caption: "damian" },
             { name: "damian-6", src: "https://github.com/damintel/damintel.github.io/blob/main/IDEA-FORMATION-COVER.jpg?raw=true", w: 500, h: 460, caption: "idea formation" },
-             ],
+          ],
+          blogPosts: [
+            {
+              "title": "The Rise of Autonomous Agents: How AI Automation is Reshaping the Digital Landscape",
+              "coverimage": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop",
+              "description": "Exploring the evolution from rule-based bots to self-improving AI agents, and what this means for developers, businesses, and the future of work.",
+              "content": "<h2>The Paradigm Shift: From Automation to Autonomy</h2><p>For years, 'automation' meant writing scripts that followed a rigid set of rules. If X happened, do Y. While effective for repetitive tasks, this approach was brittle and required constant human maintenance. Today, we are witnessing the dawn of <strong>Autonomous Agents</strong> AI systems that can understand complex goals, break them down into sub-tasks, execute actions, and learn from the outcomes with minimal human intervention.</p><p>This isn't just a marginal improvement; it's a fundamental shift in how we interact with software. It transforms computers from being tools we wield to being partners we delegate to.</p><h2>Key Components of Modern AI Automation</h2><p>To understand the impact, we must break down the architecture that powers modern AI automation. It's more than just a single Large Language Model (LLM).</p><ul><li><p><strong>Orchestration Layers:</strong> This is the 'brain' that uses techniques like ReAct (Reasoning + Acting) to plan workflows. It connects an LLM's reasoning power to external tools.</p></li><li><p><strong>Tool Integration (Function Calling):</strong> Agents don't just talk; they act. They interface with APIs, databases, and web browsers to retrieve information, send emails, update spreadsheets, or even deploy code.</p></li><li><p><strong>Memory and State Management:</strong> Unlike a simple chat prompt, autonomous agents maintain both short-term working memory (for the current task) and long-term vector databases (to recall past interactions and learn preferences).</p></li><li><p><strong>Reflection and Self-Correction:</strong> Perhaps the most critical feature. High-level agents can critique their own outputs, test their assumptions, and retry failed operations without being prompted.</p></li></ul><h2>Real-World Applications in Tech</h2><p>AI automation is rapidly moving beyond novelty. In my experience working with early adopters, these are the three most transformative use-cases currently in production:</p><ul><li><p><strong>Automated Code Review and Testing:</strong> Agents are now running alongside CI/CD pipelines. They don't just test code; they write unit tests, identify potential security vulnerabilities (CVEs), and even suggest refactoring improvements, reducing the burden on senior engineers during code reviews.</p></li><li><p><strong>Dynamic Incident Response:</strong> In DevOps, when a server goes down or latency spikes, an AI agent can independently query logs, trace the root cause, and execute rollback scripts or scale up resources, all before a human engineer opens their laptop.</p></li><li><p><strong>Personalized Onboarding:</strong> Tech platforms are using agents to analyze new users' behavior in real-time, automatically generate personalized documentation, and schedule training modules based on the user's specific role and skill level.</p></li></ul><h2>The Developer's Dilemma: Trust vs. Control</h2><p>As these systems become more powerful, we face a crucial bottleneck: <em>trust</em>. Granting an AI agent write access to a production database or the ability to deploy code requires a high degree of confidence.</p><p>We are currently in the 'Human-in-the-Loop' phase, where agents propose actions and humans approve them. However, as latency becomes a competitive advantage, we are moving toward 'Human-on-the-Loop' where the agent acts first but alerts a human only when it encounters uncertainty or high risk. The future lies in building 'Guardrails' rather than 'Fences'. We need to define the boundaries of acceptable behavior tightly, rather than dictating every step.</p><h2>Actionable Takeaways for Engineering Teams</h2><p>If you are looking to integrate AI automation into your stack, here is a practical roadmap:</p><ol><li><p><strong>Start with Observability:</strong> You cannot automate what you cannot measure. Ensure your logs, metrics, and traces are structured and accessible before adding an AI layer.</p></li><li><p><strong>Focus on 'Low-Risk, High-Frequency' Tasks First:</strong> Automate the tedious stuff like data extraction and summarization before tackling critical infrastructure changes. This builds confidence and data sets for refinement.</p></li><li><p><strong>Embrace Prompt Engineering as a Core Skill:</strong> Just as we learned to write SQL, modern teams need to learn how to craft effective prompts, chain them together, and use few-shot examples to guide agent behavior.</p></li></ol><hr /><p><em>The era of AI automation isn't about replacing engineers; it's about augmenting our capabilities. By offloading the cognitive load of mundane tasks, we free ourselves to focus on the truly hard problems: architecture, design, and understanding the user. The race is on, not to build the smartest AI, but to build the most reliable infrastructure to deploy it safely.</em></p>",
+              "date": "2026-07-24",
+              "tags": ["AI Automation", "DevOps", "Generative AI", "Tech Trends", "LLMs"]
+            }
+          ],
         };
       },
       methods: {
@@ -1050,8 +1057,14 @@
           this.currentPost = post;
           this.navigate("post");
         },
+        sendMessage() {
+          const { name, email, subject, body } = this.contactForm;
+          const fullBody = `${body}\n\n— ${name} (${email})`;
+          const mailto = `mailto:ugbahdamian@kuratorpro.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
+          window.location.href = mailto;
+        },
         downloadResume() {
-          const resumeUrl = "https://github.com/damintel/damintel.github.io/blob/main/ResumeMe.pdf?raw=true ";
+          const resumeUrl = "https://github.com/damintel/damintel.github.io/blob/main/ResumeMe.pdf?raw=true";
 
           const link = document.createElement("a");
           link.href = resumeUrl;
